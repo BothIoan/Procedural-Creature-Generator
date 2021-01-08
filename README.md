@@ -1,11 +1,11 @@
 # Niggurath
 
-##Description
+## Description
 
 This is my uni final project. I want to make a creature random generator using
 the unity engine. This Readme will be (for now) a progress log.
 
-##Ste1
+## Step1
 
 Got unity, managed to create a terrain 
 -> Will make the walk inverse kinematic look better
