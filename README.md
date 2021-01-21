@@ -53,9 +53,20 @@ Learned a bit about UI. Still won't scale as I expect, but it's functional enoug
 Also, I managed to create objects dinamically, and to assign parents to said objects. Unity is great. You just draw the script on an object and it adds it as a component.
 For now I have a plane of symmetry and two child objects.
 
-## Step4>
+## Step4
 
 ## Before
 I finally can start a little bit of the generation stuff. I'll try to have some procedural generation of legs for the next step.
 After this I will work to make multiple symetry easier to implement
+
+## After
+I did a little procedural generation. Currently it is really constrained, so you get something between a multi-legged minotaur and a human. This constraints can be easily tweaked, but I added them to have more concrete results. Code cleanup should be the next stage, and after serialize all the variables (also the direction pointer should be removed from the skeleton)
+I'm pretty satisfied with the results. The procedural generation part should go really smooth from now on. The animation and the AI part are the next obstacles. (Also interfaces will be hard to manage)
+
+## Step5>
+
+## Before
+Clean up the code. make more parameters random (Add multiple legs per spine segment), remove the direction pointer.
+
+
 
