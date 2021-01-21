@@ -8,7 +8,8 @@ public class NewObject : MonoBehaviour
 {
     // the Equip prefab - required for instantiation
     public GameObject equipPrefab;
-
+    public GameObject parent;
+    [SerializeField] private float distance;
     // list that holds all created objects - deleate all instances if desired
     public List<GameObject> createdObjects = new List<GameObject>();
 
@@ -33,11 +34,26 @@ public class NewObject : MonoBehaviour
         if (equipPrefab != null)
         {
             // get a random postion to instantiate the prefab - you can change this to be created at a fied point if desired
-            Vector3 position = new Vector3(501, 0, 510);
+            Vector3 position = new Vector3(501, 3, 510);
+
+            GameObject parentSphere = (GameObject)Instantiate(parent, position, Quaternion.identity);
+            createdObjects.Add(parentSphere);
+            position.y -= 2;
 
             // instantiate the object
-            GameObject go = (GameObject)Instantiate(equipPrefab, position, Quaternion.identity);
-            createdObjects.Add(go);
+            Vector3 pos1 = position;
+            pos1.z -= distance;
+            GameObject g1 = (GameObject)Instantiate(equipPrefab, pos1, Quaternion.identity);
+            g1.transform.parent = parentSphere.transform;
+            createdObjects.Add(g1);
+
+            Vector3 pos2 = position;
+            pos2.z += distance;
+            GameObject g2 = (GameObject)Instantiate(equipPrefab, pos2, Quaternion.identity);
+            g2.transform.parent = parentSphere.transform;
+            createdObjects.Add(g2);
+
+
         }
     }
 }

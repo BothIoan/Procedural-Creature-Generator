@@ -38,7 +38,7 @@ Wrote a rotate object script. I might want to also rotate the ground, and to hav
 Cleaned the DrawSkeleton script. Later I might change the skeleton drawing, to make it look smoother.
 Made color of skeleton and rotation speed serializable. I can let the user change them later.
 
-## Step4>
+## Step4
 
 ## Before:
 The UI creation is more complicated than I expected in 3D. I managed to put some janky panes on the screen, but those need to be changed.
@@ -46,4 +46,16 @@ The UI creation is more complicated than I expected in 3D. I managed to put some
 
 * Make a stable UI , with a label and a button. When the button is pressed:
 * Create a bone.
+
+## After:
+
+Learned a bit about UI. Still won't scale as I expect, but it's functional enough. I have text and a button.
+Also, I managed to create objects dinamically, and to assign parents to said objects. Unity is great. You just draw the script on an object and it adds it as a component.
+For now I have a plane of symmetry and two child objects.
+
+## Step4>
+
+## Before
+I finally can start a little bit of the generation stuff. I'll try to have some procedural generation of legs for the next step.
+After this I will work to make multiple symetry easier to implement
 
