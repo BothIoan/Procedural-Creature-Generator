@@ -23,13 +23,12 @@ public class DrawBones : MonoBehaviour
         Hacku.Enabled = true;
         if (rootNode != null)
         {
-        foreach (Transform child in childNodes)
-        {
-            if (child != rootNode)
-                {
-                    Hacku.Line(child.position, child.parent.position,color);
-                    
-                }
+            foreach (Transform child in childNodes)
+            {
+                   if (child != rootNode)
+                   {
+                        Hacku.Line(child.position, child.parent.position,color);
+                   }
             }
         }
     }

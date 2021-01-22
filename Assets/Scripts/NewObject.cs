@@ -72,7 +72,7 @@ public class NewObject : MonoBehaviour
         for (int i = 0; i < nrOfLegs; i++)
         {
             
-            ammount += Random.Range(-2f, -3f);
+            
             legAttPos.x = symPlane.transform.position.x + ammount;
             GameObject legAtt = (GameObject)Instantiate(equipPrefab, legAttPos, Quaternion.identity);
             legAtt.transform.parent = symPlane.transform;
@@ -86,6 +86,7 @@ public class NewObject : MonoBehaviour
             {
                 SpineStage(legAtt.transform,symPlane.transform);
             }
+            ammount += Random.Range(-2f, -3f);
         }
     }
 
