@@ -9,11 +9,13 @@ public class NewObject : MonoBehaviour
     // the Equip prefab - required for instantiation
     public GameObject equipPrefab;
     public GameObject parent;
-    public List<GameObject> createdObjects = new List<GameObject>();
-    private float minX, maxX, minY, maxY;
+    public List<GameObject> createdObjects;
     public GameObject currentSymPlane;
     int currentDSign;
     public GameObject tempHJoint;
+    public GameObject tempVJoint;
+    public List<GameObject> hSpine;
+    public List<GameObject> vSpine;
 
     public struct symPair
     {
@@ -52,7 +54,7 @@ public class NewObject : MonoBehaviour
     public void getDirection()
     {
         currentDSign = -1;
-        maxX = currentSymPlane.GetComponent<MeshRenderer>().bounds.size.x;
+        float maxX = currentSymPlane.GetComponent<MeshRenderer>().bounds.size.x;
         float currentDirection = maxX / 2 + currentSymPlane.transform.position.x;
         if (currentDirection > currentSymPlane.transform.position.x)
         {
@@ -62,21 +64,32 @@ public class NewObject : MonoBehaviour
 
     public void VSpineStage()
     {
-        Vector3 headPos = tempHJoint.transform.position;
-        headPos.y += Random.Range(3f, 5f);
-        GameObject head = (GameObject)Instantiate(equipPrefab, headPos, Quaternion.identity);
-        head.transform.parent = tempHJoint.transform;
-        createdObjects.Add(head);
-        MirrorCreate(currentSymPlane.transform, head.transform, head.transform, 0, Random.Range(0.5f, 1f), Random.Range(2f, 3f));
+        int nrOfJoints = Random.Range(1, 3);
+        //temporary disable 
+      // nrOfJoints = 1;
+       vSpine = new List<GameObject>();
+        Vector3 jointP = currentSymPlane.transform.position;
+        float distance = Random.Range(1f,1.5f);
+
+        for (int i = 0; i < nrOfJoints; i++)
+        {
+            jointP.y = currentSymPlane.transform.position.y + distance;
+            GameObject joint = (GameObject)Instantiate(equipPrefab, jointP, Quaternion.identity);
+            joint.transform.parent = currentSymPlane.transform;
+            createdObjects.Add(joint);
+            vSpine.Add(joint);
+            distance += Random.Range(2f, 3f);
+        }
+        tempVJoint = vSpine[nrOfJoints-1];
     }
 
-    public List<GameObject> HSpineStage()
+    public void HSpineStage()
     {
-        List<GameObject> hSpine = new List<GameObject>();
+
         int nrOfJoints = Random.Range(1, 5);
         Vector3 jointP = currentSymPlane.transform.position;
         float distance = 0;
-
+        hSpine = new List<GameObject>();
         for (int i = 0; i < nrOfJoints;i++)
         {
             jointP.x = currentSymPlane.transform.position.x + distance;
@@ -87,13 +100,11 @@ public class NewObject : MonoBehaviour
             distance += Random.Range(-2f, -3f);
         }
         tempHJoint = hSpine[0];
-        return hSpine;
     }
 
     public void LegsStage()
     {
         float distanceZ = Random.Range(0f, 3f);
-        List<GameObject> hSpine = HSpineStage();
         hSpine.ForEach(x =>
         {
             float distanceX = Random.Range(-1f, -1.5f);
@@ -102,9 +113,21 @@ public class NewObject : MonoBehaviour
         });
     }
 
-    public void ArmsStage()
+    public void ArmsStage() 
     {
+        vSpine.ForEach(x =>
+        {
+            MirrorCreate(x.transform, x.transform, x.transform, Random.Range(-0.5f,-1f), Random.Range(0.5f, 1f), Random.Range(2f, 3f));
+        });
+    }
 
+    public void HeadStage()
+    {
+        Vector3 headP = tempVJoint.transform.position;
+        headP.y += Random.Range(1f, 1.5f);
+        GameObject head = (GameObject)Instantiate(equipPrefab, headP, Quaternion.identity);
+        head.transform.parent = tempVJoint.transform;
+        createdObjects.Add(head);
     }
 
     public symPair MirrorCreate(Transform symPlanT, Transform parent1T, Transform parent2T, float distanceX, float distanceY, float distanceZ)
@@ -132,7 +155,10 @@ public class NewObject : MonoBehaviour
         Cleanup();
         PlaneStage();
         getDirection();
+        HSpineStage();
         LegsStage();
         VSpineStage();
+        ArmsStage();
+        HeadStage();
     }
 }
