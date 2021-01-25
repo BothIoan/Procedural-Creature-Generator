@@ -81,4 +81,13 @@ Clean up the code. make more parameters random (Add multiple legs per spine segm
 What's nice about the current state of the project is that just by generating a few creatures you can clearly see what you could add next,
 and if it's interesting enough to be added. More than that the code is modular enough to facilitate changes.
 The next updates will be small features added, until I think the generator has the majority of the components I wanted to include.
+To Add:
+
+* Complete leg bone structure
+* Complete arm bone structure
+* Add multiple arms per vJoint
+* Add multiple legs per vJoint
+* Add different angles to head
+* Add spider legs
+* Add different angles to spines
 
