@@ -35,6 +35,14 @@ public class NewObject : MonoBehaviour
         nume1.Add("scandalu'");
         nume1.Add("copilu");
         nume1.Add("nacazu'");
+        nume1.Add("faraonu'");
+        nume1.Add("bocteru'");
+        nume1.Add("basculantu'");
+        nume1.Add("junghiu'");
+        nume1.Add("milmoiu'");
+        nume1.Add("mazgoiu");
+        nume1.Add("sarumanu'");
+        nume1.Add("opelu'");
         nume1.Add(" talharu'");
         nume1.Add(" belferu'");
         nume2.Add(" rau");
@@ -46,18 +54,29 @@ public class NewObject : MonoBehaviour
         nume2.Add(" dusmanos");
         nume2.Add(" durerii");
         nume2.Add(" nacaz");
+        nume2.Add(" nacajit");
+        nume2.Add(" din animeuri");
         nume2.Add(" had");
         nume2.Add(" hait");
+        nume2.Add(" caraiala");
+        nume2.Add(" chinezesc");
+        nume2.Add(" tradarii");
+        nume2.Add(" bastarca");
+        nume2.Add(" glorios");
+        nume2.Add(" liliac");
+        nume2.Add(" accident");
         nume2.Add(" blastamat");
         nume2.Add(" distrugator");
         nume2.Add(" puterii");
         nume2.Add(" mortii");
         nume2.Add(" lorbant");
+        nume2.Add(" terminatoru");
         nume2.Add(" nebun");
         nume2.Add(" ciumei");
         nume2.Add(" intunecat mandru");
         nume2.Add(" intunecat");
         nume2.Add(" tumultos");
+        nume2.Add("taganesc");
         nume2.Add(" buclucas");
         nume2.Add(" sarac");
         
@@ -142,12 +161,12 @@ public class NewObject : MonoBehaviour
         Vector3 jointP = currentSymPlane.transform.position;
         jointP.y += Random.Range(1f,-1f);
         float distance = 0;
-       // float incline = Random.Range(-1f, 1f);
+        float incline = Random.Range(-0.5f, 0.5f);
         hSpine = new List<GameObject>();
         
         for (int i = 0; i < nrOfJoints;i++)
         {
-           // jointP.y = currentSymPlane.transform.position.y + incline;
+            jointP.y = currentSymPlane.transform.position.y + incline;
             jointP.x = currentSymPlane.transform.position.x + distance;
             GameObject joint = (GameObject)Instantiate(equipPrefab, jointP, Quaternion.identity);
             if (i == 0) joint.transform.parent = currentSymPlane.transform;
@@ -155,7 +174,7 @@ public class NewObject : MonoBehaviour
             createdObjects.Add(joint);
             hSpine.Add(joint);
             distance += Random.Range(-2f, -3f);
-            //incline += incline;
+            incline += incline;
         }
         tempHJoint = hSpine[0];
         //hack to be able to remove the arms stage
@@ -172,18 +191,13 @@ public class NewObject : MonoBehaviour
             spidery = true;
         }
         //legs must happen between the current point and the ground.
-        float yUp = hSpine[0].transform.position.y ;
+        
         float yDown = 0.1f;
         //choose position of knee:
         float kneeY;
         float kneeY2 = 0;
         float kneeY3 = 0;
-        if (spidery) {
-            kneeY = Random.Range(-1f, -3f);
-            kneeY2 = kneeY + Random.Range(1f, 2f);
-            kneeY3 = kneeY2 + Random.Range(1f, 2f);
-            }
-        else kneeY = Random.Range(yUp, yDown);
+      
         float distanceZ = Random.Range(0f, 3f);
         hSpine.ForEach(x =>
         {
@@ -193,6 +207,11 @@ public class NewObject : MonoBehaviour
                 float distanceX = Random.Range(0f, -1.5f);
                 for(int i = 0; i< 2; i++)
                 {
+                    float yUp = x.transform.position.y;
+                    kneeY = Random.Range(-1f, -3f);
+                    kneeY2 = kneeY + Random.Range(1f, 2f);
+                    kneeY3 = kneeY2 + Random.Range(1f, 2f);
+                    
                     if (i == 1) distanceX *= -1;
                     symPair firstJoint = MirrorCreate(x.transform, x.transform, x.transform, 0, 0, distanceZ);
                     symPair secondJoint = MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX, kneeY, distanceZ + Random.Range(0f, 1f));
@@ -203,6 +222,8 @@ public class NewObject : MonoBehaviour
             }
             else for (int i = 0; i < Random.Range(1, 3); i++)
             {
+                float yUp = x.transform.position.y;
+                kneeY = Random.Range(yUp, yDown);
                 float distanceX = Random.Range(0f, -1.5f);
                 symPair firstJoint = MirrorCreate(x.transform, x.transform, x.transform, 0, 0, distanceZ);
                 symPair secondJoint = MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX, kneeY, distanceZ + Random.Range(0f, 1f));

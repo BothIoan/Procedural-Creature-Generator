@@ -269,6 +269,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2649f633b8b178647a42e1a58bdab451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  text: {fileID: 1874290766}
+  fun: 1
   equipPrefab: {fileID: 1684921123}
   parent: {fileID: 3876027901828437053}
   createdObjects: []
