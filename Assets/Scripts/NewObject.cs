@@ -13,6 +13,7 @@ public class NewObject : MonoBehaviour
     private float minX, maxX, minY, maxY;
     public GameObject currentSymPlane;
     int currentDSign;
+    public GameObject tempHJoint;
 
     public struct symPair
     {
@@ -59,40 +60,46 @@ public class NewObject : MonoBehaviour
         }
     }
 
-    public void LegsStage()
+    public void VSpineStage()
     {
-        int nrOfLegs = Random.Range(1,5);
-        Vector3 legAttPos = currentSymPlane.transform.position;
-        float distanceZ = Random.Range(0f, 3f);
-        
-        float ammount = 0;
-        for (int i = 0; i < nrOfLegs; i++)
-        {
-            legAttPos.x = currentSymPlane.transform.position.x + ammount;
-            GameObject legAtt = (GameObject)Instantiate(equipPrefab, legAttPos, Quaternion.identity);
-            legAtt.transform.parent = currentSymPlane.transform;
-            createdObjects.Add(legAtt);
-            
-            float distanceX = -1*(ammount + Random.Range(1f,1.5f));
-
-            symPair joints = MirrorCreate(currentSymPlane.transform,legAtt.transform,legAtt.transform, distanceX, 3, distanceZ);
-            MirrorCreate(currentSymPlane.transform,joints.transform1,joints.transform2, (distanceX + 1) * currentDSign, 4, distanceZ);
-            if (i == 0)
-            {
-                SpineStage(legAtt.transform,currentSymPlane.transform);
-            }
-            ammount += Random.Range(-2f, -3f);
-        }
-    }
-
-    public void SpineStage(Transform parent, Transform symPlane)
-    {
-        Vector3 headPos = parent.position;
+        Vector3 headPos = tempHJoint.transform.position;
         headPos.y += Random.Range(3f, 5f);
         GameObject head = (GameObject)Instantiate(equipPrefab, headPos, Quaternion.identity);
-        head.transform.parent = parent;
+        head.transform.parent = tempHJoint.transform;
         createdObjects.Add(head);
-        MirrorCreate(symPlane, head.transform, head.transform, 0, Random.Range(0.5f, 1f), Random.Range(2f, 3f));
+        MirrorCreate(currentSymPlane.transform, head.transform, head.transform, 0, Random.Range(0.5f, 1f), Random.Range(2f, 3f));
+    }
+
+    public List<GameObject> HSpineStage()
+    {
+        List<GameObject> hSpine = new List<GameObject>();
+        int nrOfJoints = Random.Range(1, 5);
+        Vector3 jointP = currentSymPlane.transform.position;
+        float distance = 0;
+
+        for (int i = 0; i < nrOfJoints;i++)
+        {
+            jointP.x = currentSymPlane.transform.position.x + distance;
+            GameObject joint = (GameObject)Instantiate(equipPrefab, jointP, Quaternion.identity);
+            joint.transform.parent = currentSymPlane.transform;
+            createdObjects.Add(joint);
+            hSpine.Add(joint);
+            distance += Random.Range(-2f, -3f);
+        }
+        tempHJoint = hSpine[0];
+        return hSpine;
+    }
+
+    public void LegsStage()
+    {
+        float distanceZ = Random.Range(0f, 3f);
+        List<GameObject> hSpine = HSpineStage();
+        hSpine.ForEach(x =>
+        {
+            float distanceX = Random.Range(-1f, -1.5f);
+            symPair firstJoint = MirrorCreate(x.transform, x.transform, x.transform, distanceX , 3, distanceZ);
+            MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, currentDSign * (distanceX + 1), 4, distanceZ);
+        });
     }
 
     public void ArmsStage()
@@ -126,5 +133,6 @@ public class NewObject : MonoBehaviour
         PlaneStage();
         getDirection();
         LegsStage();
+        VSpineStage();
     }
 }
