@@ -209,7 +209,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 438219769}
         m_TargetAssemblyTypeName: NewObject, Assembly-CSharp
-        m_MethodName: LegsStage
+        m_MethodName: pressButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -272,6 +272,7 @@ MonoBehaviour:
   equipPrefab: {fileID: 1684921123}
   parent: {fileID: 3876027901828437053}
   createdObjects: []
+  currentSymPlane: {fileID: 0}
 --- !u!1 &528659465
 GameObject:
   m_ObjectHideFlags: 0
