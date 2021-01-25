@@ -74,7 +74,7 @@ Clean up the code. make more parameters random (Add multiple legs per spine segm
 * I implemented multiple spineSegments for arms(from now on called verticalJoints).
 * I implemented the head.
 
-## Step6>
+## Step6
 
 ## Before
 
@@ -90,4 +90,17 @@ To Add:
 * Add different angles to head
 * Add spider legs
 * Add different angles to spines
+
+## After
+
+Added all of the features above more or less + another small feature just for my fun which assigns funny names to each creature (depending on your sense of humor.) I love how they look now. Next I'll try to polish the just implemented features.
+
+## Step7>
+
+## Before
+
+* Make hSpines incline-able.
+* Make spider legs more modular, so that there can be 1-3 legs per joint
+
+
 
