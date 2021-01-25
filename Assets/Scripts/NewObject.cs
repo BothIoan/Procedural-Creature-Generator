@@ -128,12 +128,15 @@ public class NewObject : MonoBehaviour
     {
         vSpine.ForEach(x =>
         {
-            float armKnee = Random.Range(1f,2f);
-            float distanceZ = Random.Range(0.1f, 0.5f);
-            float distanceX = Random.Range(0.5f, -2f);
-            symPair firstJoint = MirrorCreate(x.transform, x.transform, x.transform, 0, 0, distanceZ);
-            symPair secondJoint = MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2,distanceX , Random.Range(0.5f, 1f), distanceZ + armKnee);
-            MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, distanceX + Random.Range(-0.5f, -1f), Random.Range(0.5f, 1f), Random.Range(0,distanceZ+ armKnee) );
+            for (int i = 0; i < Random.Range(1,3); i++)
+            {
+                float armKnee = Random.Range(1f, 2f);
+                float distanceZ = Random.Range(0.1f, 0.5f);
+                float distanceX = Random.Range(0.5f, -2f);
+                symPair firstJoint = MirrorCreate(x.transform, x.transform, x.transform, 0, 0, distanceZ);
+                symPair secondJoint = MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX, Random.Range(0.5f, 1f), distanceZ + armKnee);
+                MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, distanceX + Random.Range(-0.5f, -1f), Random.Range(0.5f, 1f), Random.Range(0, distanceZ + armKnee));
+            }
         });
     }
 
