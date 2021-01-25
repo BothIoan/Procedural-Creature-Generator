@@ -63,10 +63,22 @@ After this I will work to make multiple symetry easier to implement
 I did a little procedural generation. Currently it is really constrained, so you get something between a multi-legged minotaur and a human. This constraints can be easily tweaked, but I added them to have more concrete results. Code cleanup should be the next stage, and after serialize all the variables (also the direction pointer should be removed from the skeleton)
 I'm pretty satisfied with the results. The procedural generation part should go really smooth from now on. The animation and the AI part are the next obstacles. (Also interfaces will be hard to manage)
 
-## Step5>
+## Step5
 
 ## Before
 Clean up the code. make more parameters random (Add multiple legs per spine segment), remove the direction pointer.
 
+## After
 
+* I did the code cleanup.
+* I implemented multiple spineSegments for arms(from now on called verticalJoints).
+* I implemented the head.
+
+## Step6>
+
+## Before
+
+What's nice about the current state of the project is that just by generating a few creatures you can clearly see what you could add next,
+and if it's interesting enough to be added. More than that the code is modular enough to facilitate changes.
+The next updates will be small features added, until I think the generator has the majority of the components I wanted to include.
 
