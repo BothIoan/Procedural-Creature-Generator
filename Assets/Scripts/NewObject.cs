@@ -103,6 +103,8 @@ public class NewObject : MonoBehaviour
             distance += Random.Range(-2f, -3f);
         }
         tempHJoint = hSpine[0];
+        //hack to be able to remove the arms stage
+        tempVJoint = hSpine[0];
     }
 
     public void LegsStage()
@@ -146,7 +148,8 @@ public class NewObject : MonoBehaviour
     public void HeadStage()
     {
         Vector3 headP = tempVJoint.transform.position;
-        headP.y += Random.Range(1f, 1.5f);
+        headP.y += Random.Range(0f, 1.5f);
+        headP.x += Random.Range(0f, 1.5f);
         GameObject head = (GameObject)Instantiate(equipPrefab, headP, Quaternion.identity);
         head.transform.parent = tempVJoint.transform;
         createdObjects.Add(head);
@@ -180,6 +183,7 @@ public class NewObject : MonoBehaviour
         HSpineStage();
         LegsStage();
         VSpineStage();
+        if (Random.Range(0, 2) == 1)
         ArmsStage();
         HeadStage();
     }
