@@ -25,7 +25,7 @@ public class DrawBones : MonoBehaviour
         {
             foreach (Transform child in childNodes)
             {
-                   if (child != rootNode)
+                if (child != rootNode && child.parent != rootNode) 
                    {
                         Hacku.Line(child.position, child.parent.position,color);
                    }

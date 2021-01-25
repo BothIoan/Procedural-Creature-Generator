@@ -75,7 +75,8 @@ public class NewObject : MonoBehaviour
         {
             jointP.y = currentSymPlane.transform.position.y + distance;
             GameObject joint = (GameObject)Instantiate(equipPrefab, jointP, Quaternion.identity);
-            joint.transform.parent = currentSymPlane.transform;
+            if (i == 0) joint.transform.parent = tempHJoint.transform;
+            else joint.transform.parent = vSpine[i - 1].transform;
             createdObjects.Add(joint);
             vSpine.Add(joint);
             distance += Random.Range(2f, 3f);
@@ -88,13 +89,15 @@ public class NewObject : MonoBehaviour
 
         int nrOfJoints = Random.Range(1, 5);
         Vector3 jointP = currentSymPlane.transform.position;
+        jointP.y += Random.Range(1f,-1f);
         float distance = 0;
         hSpine = new List<GameObject>();
         for (int i = 0; i < nrOfJoints;i++)
         {
             jointP.x = currentSymPlane.transform.position.x + distance;
             GameObject joint = (GameObject)Instantiate(equipPrefab, jointP, Quaternion.identity);
-            joint.transform.parent = currentSymPlane.transform;
+            if (i == 0) joint.transform.parent = currentSymPlane.transform;
+            else joint.transform.parent = hSpine[i - 1].transform;
             createdObjects.Add(joint);
             hSpine.Add(joint);
             distance += Random.Range(-2f, -3f);
@@ -104,12 +107,20 @@ public class NewObject : MonoBehaviour
 
     public void LegsStage()
     {
+
+        //legs must happen between the current point and the ground.
+        float yUp = hSpine[0].transform.position.y;
+        float yDown = 0f;
+        //choose position of knee:
+        float kneeY = Random.Range(yUp, yDown);
         float distanceZ = Random.Range(0f, 3f);
         hSpine.ForEach(x =>
         {
-            float distanceX = Random.Range(-1f, -1.5f);
-            symPair firstJoint = MirrorCreate(x.transform, x.transform, x.transform, distanceX , 3, distanceZ);
-            MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, currentDSign * (distanceX + 1), 4, distanceZ);
+            float distanceX = Random.Range(0f, -1.5f);
+            symPair firstJoint = MirrorCreate(x.transform, x.transform, x.transform, 0, 0, distanceZ);
+            symPair secondJoint = MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX , kneeY, distanceZ + Random.Range(0f, 1f));
+            symPair thirdJoint = MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, currentDSign * (distanceX + Random.Range(0f,1f)), yUp, distanceZ);
+            MirrorCreate(x.transform, thirdJoint.transform1, thirdJoint.transform2,currentDSign * (distanceX + 1) -1, yUp, distanceZ);
         });
     }
 
