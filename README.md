@@ -95,12 +95,25 @@ To Add:
 
 Added all of the features above more or less + another small feature just for my fun which assigns funny names to each creature (depending on your sense of humor.) I love how they look now. Next I'll try to polish the just implemented features.
 
-## Step7>
+## Step7
 
 ## Before
 
 * Make hSpines incline-able.
 * Make spider legs more modular, so that there can be 1-3 legs per joint
 
+# After
+I'm very happy with the results. I made the hSpines incline-able.
 
+## Step8
+
+## Before
+
+Spidery creatures are generated too often. I might will the chance of one spawning
+A lot of constraints need to be enforced so that members will overlap. I will dedicate a step to this in the future. For now
+I will make the legs and hands impossible to overlap. The names feature is really funny. Showed it to friends and got more ridiculous words to put in the app.
+
+## After
+
+For placing constraints, so that members can't overlap I needed a better sense of scale. And for that I needed to see how the creatures would look when textures are placed on them. After paining myself with the mathematics, I finally was able to put bone textures between the joints. I also placed some skulls on the heads of the creatures. It was really worth it. The creatures look really good now, and there's enught diversity between them that you could think this is the final product
 

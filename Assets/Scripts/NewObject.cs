@@ -10,6 +10,8 @@ public class NewObject : MonoBehaviour
     private List<string> nume2 = new List<string>();
     [SerializeField] Text text;
     [SerializeField] bool fun;
+    [SerializeField] public GameObject bone;
+    [SerializeField] List<GameObject> skulls;
     //for fun
 
 
@@ -17,13 +19,13 @@ public class NewObject : MonoBehaviour
     public GameObject equipPrefab;
     public GameObject parent;
     public List<GameObject> createdObjects;
+    public List<GameObject> drawnBones;
     public GameObject currentSymPlane;
     int currentDSign;
     public GameObject tempHJoint;
     public GameObject tempVJoint;
     public List<GameObject> hSpine;
     public List<GameObject> vSpine;
-
 
     private void forFun()
     {
@@ -76,7 +78,8 @@ public class NewObject : MonoBehaviour
         nume2.Add(" intunecat mandru");
         nume2.Add(" intunecat");
         nume2.Add(" tumultos");
-        nume2.Add("taganesc");
+        nume2.Add(" taganesc");
+        nume2.Add(" din filmele matrix");
         nume2.Add(" buclucas");
         nume2.Add(" sarac");
         
@@ -103,6 +106,11 @@ public class NewObject : MonoBehaviour
             Destroy(x);
         });
         createdObjects.Clear();
+        drawnBones.ForEach((x) =>
+        {
+            Destroy(x);
+        });
+        drawnBones.Clear();
         //temp
     }
 
@@ -154,6 +162,31 @@ public class NewObject : MonoBehaviour
         tempVJoint = vSpine[nrOfJoints-1];
     }
 
+    public void DrawBonesStage()
+    {
+        createdObjects.ForEach(x => {
+            if (x.transform.parent != null && x.transform.parent !=currentSymPlane.transform)
+            {
+                Transform tempParent = x.transform.parent;
+                Transform tempParentParent = x.transform.parent.parent;
+                x.transform.parent = null;
+                GameObject newBone = (GameObject)Instantiate(bone, x.transform.position, Quaternion.FromToRotation(Vector3.up, tempParent.transform.position - x.transform.position));
+                newBone.transform.parent = null;
+                newBone.transform.localScale = new Vector3(0, newBone.transform.localScale.y, 0);
+                Vector3 minC = newBone.GetComponent<Renderer>().bounds.min;
+                Vector3 maxC = newBone.GetComponent<Renderer>().bounds.max;
+                float distC = Vector3.Distance(minC,maxC);
+                float distN = Vector3.Distance(tempParent.transform.position, x.transform.position);
+                float scaleN = distN / distC;
+                newBone.transform.localScale = new Vector3(0.5f, scaleN* 1.1f, 0.5f);
+                newBone.transform.parent = tempParent.transform;
+                x.transform.parent = tempParent;
+                x.transform.parent.parent = tempParentParent;
+                drawnBones.Add(newBone);
+            }
+        }); 
+    }
+
     public void HSpineStage()
     {
 
@@ -191,12 +224,25 @@ public class NewObject : MonoBehaviour
             spidery = true;
         }
         //legs must happen between the current point and the ground.
-        
         float yDown = 0.1f;
         //choose position of knee:
         float kneeY;
         float kneeY2 = 0;
         float kneeY3 = 0;
+        float yUp = currentSymPlane.transform.position.y;
+        if (spidery)
+        {
+            
+            kneeY = Random.Range(-1f, -3f);
+            kneeY2 = kneeY + Random.Range(1f, 2f);
+            kneeY3 = kneeY2 + Random.Range(1f, 2f);
+        }
+        else
+        {
+            kneeY = Random.Range(yUp, yDown);
+        }
+
+       
       
         float distanceZ = Random.Range(0f, 3f);
         hSpine.ForEach(x =>
@@ -207,28 +253,24 @@ public class NewObject : MonoBehaviour
                 float distanceX = Random.Range(0f, -1.5f);
                 for(int i = 0; i< 2; i++)
                 {
-                    float yUp = x.transform.position.y;
-                    kneeY = Random.Range(-1f, -3f);
-                    kneeY2 = kneeY + Random.Range(1f, 2f);
-                    kneeY3 = kneeY2 + Random.Range(1f, 2f);
+                  
                     
                     if (i == 1) distanceX *= -1;
                     symPair firstJoint = MirrorCreate(x.transform, x.transform, x.transform, 0, 0, distanceZ);
                     symPair secondJoint = MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX, kneeY, distanceZ + Random.Range(0f, 1f));
                     symPair thirdJoint = MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, distanceX, kneeY2, distanceZ + Random.Range(1f, 2f));
                     symPair fourthJoint = MirrorCreate(x.transform, thirdJoint.transform1, thirdJoint.transform2, distanceX, kneeY3, distanceZ + Random.Range(1f, 2f));
-                    MirrorCreate(x.transform, fourthJoint.transform1, fourthJoint.transform2, currentDSign * (distanceX + Random.Range(0f, 1f)), yUp, distanceZ);
+                    MirrorCreate(x.transform, fourthJoint.transform1, fourthJoint.transform2, currentDSign * (distanceX + Random.Range(0f, 1f)), x.transform.position.y, distanceZ);
                 }
             }
             else for (int i = 0; i < Random.Range(1, 3); i++)
             {
-                float yUp = x.transform.position.y;
-                kneeY = Random.Range(yUp, yDown);
+                
                 float distanceX = Random.Range(0f, -1.5f);
                 symPair firstJoint = MirrorCreate(x.transform, x.transform, x.transform, 0, 0, distanceZ);
                 symPair secondJoint = MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX, kneeY, distanceZ + Random.Range(0f, 1f));
-                symPair thirdJoint = MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, currentDSign * (distanceX + Random.Range(0f, 1f)), yUp, distanceZ);
-                MirrorCreate(x.transform, thirdJoint.transform1, thirdJoint.transform2, currentDSign * (distanceX + 1) - 1, yUp, distanceZ);
+                symPair thirdJoint = MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, currentDSign * (distanceX + Random.Range(0f, 1f)), x.transform.position.y, distanceZ);
+                MirrorCreate(x.transform, thirdJoint.transform1, thirdJoint.transform2, currentDSign * (distanceX + 1) - 1, x.transform.position.y, distanceZ);
             }
         });
     }
@@ -257,6 +299,15 @@ public class NewObject : MonoBehaviour
         GameObject head = (GameObject)Instantiate(equipPrefab, headP, Quaternion.identity);
         head.transform.parent = tempVJoint.transform;
         createdObjects.Add(head);
+        GameObject crocSkull = (GameObject)Instantiate(skulls[Random.Range(0,skulls.Count)], headP, Quaternion.Euler(new Vector3(0,180,0)));
+        crocSkull.transform.parent = head.transform;
+        createdObjects.Add(crocSkull);
+        //  newBone.transform.rotation = Quaternion.FromToRotation(Vector3.up, tempVJoint.transform.position  - head.transform.position);
+
+        //MeshRenderer meshRenderer = newBone.GetComponent<MeshRenderer>();
+        //meshRenderer.bounds.SetMinMax(head.transform.position, head.transform.position);
+
+
     }
 
     public symPair MirrorCreate(Transform symPlanT, Transform parent1T, Transform parent2T, float distanceX, float distanceY, float distanceZ)
@@ -295,5 +346,6 @@ public class NewObject : MonoBehaviour
             ArmsStage();
         }
         HeadStage();
+        DrawBonesStage();
     }
 }

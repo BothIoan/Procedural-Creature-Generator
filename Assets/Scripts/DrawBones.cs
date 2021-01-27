@@ -6,6 +6,7 @@ using Hacku = Popcron.Gizmos;
 
 public class DrawBones : MonoBehaviour
 {
+    [SerializeField] public GameObject bone;
     [SerializeField] public Transform rootNode;
     public Transform[] childNodes;
     [SerializeField] Color customColor;
@@ -27,8 +28,10 @@ public class DrawBones : MonoBehaviour
             {
                 if (child != rootNode && child.parent != rootNode) 
                    {
-                        Hacku.Line(child.position, child.parent.position,color);
-                   }
+                    
+                    Hacku.Line(child.position, child.parent.position,color);
+
+                }
             }
         }
     }
