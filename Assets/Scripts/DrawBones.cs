@@ -22,7 +22,7 @@ public class DrawBones : MonoBehaviour
     void Update()
     {
         Hacku.Enabled = true;
-        if (rootNode != null)
+        if (!rootNode)
         {
             foreach (Transform child in childNodes)
             {
