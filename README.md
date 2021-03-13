@@ -117,3 +117,19 @@ I will make the legs and hands impossible to overlap. The names feature is reall
 
 For placing constraints, so that members can't overlap I needed a better sense of scale. And for that I needed to see how the creatures would look when textures are placed on them. After paining myself with the mathematics, I finally was able to put bone textures between the joints. I also placed some skulls on the heads of the creatures. It was really worth it. The creatures look really good now, and there's enught diversity between them that you could think this is the final product
 
+## Step 9
+
+## Before
+Skipped writing
+
+## After
+* I added wings and tails. Wings took a lot of times, because they have complex shapes that are hard to describe at runtime. To describe their curves you need combinations of exponential and liniar functions. I started on a wrong path at first, describing them manually, just to get a sense of what a wing is. Fortunatelly I managed to generate some wings that look above decent, and can be improved. These are the bird-type wings.(some bones and bones representing feathers attached to them).
+* I also added bat-like wings (hands in the form of wings). Those are too much of a fixed structure. If you would try to describe them through functions it would take a lot of time and you would get little to no space for valuable variations. At a later time I will make their general size and length variable.
+* I added the first animation (a head rotation) to the project. This took a lot of time, because animations are usually added in blender, when creating the character. In unity you are provided with rigging animations which help a lot, because they can be generated in unity. Unfortunately, their main use is in editor mode (with drag and drop tools). The Scripting API is very poorly documented, and I found no tutorials on the subject of scripting this animations, so I had to figure out by myself a way to do this.
+* Animations get complicated with instantiated objects because their rotations are not applied, and you can't apply them in unity. The way I generate creatures is through first placing the joints and then, between the joints, instantiating the bones. This helps me at animations because the joints are not rotated, but it might have an negative impact on the performance/larger objects when exporting, so I might want to find a solution for this later. Through trying to fix this, I accidentally Found a way to export prefabs(type of object readable only in unity), and how to convert those prefabs into fbx files(readable in blender).
+* In short : I added wings, tails, learned how to animate dynamically and added an animation, found a way to export prefabs and fbx files containing the creatures.
+
+## Step 10 >
+
+## Before
+Now is the time to add all the animations. More than half of the researching is done from step 9, but I still have to learn how to do complex IK on my weird representation of the creatures.

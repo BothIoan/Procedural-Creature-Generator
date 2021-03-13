@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ public class NewObject : MonoBehaviour
     [SerializeField] public GameObject bone;
     [SerializeField] public GameObject spike;
     [SerializeField] List<GameObject> skulls;
+    private bool animated = false;
+    private GameObject headTarget;
     //for fun
 
 
@@ -29,6 +32,7 @@ public class NewObject : MonoBehaviour
     public List<GameObject> vSpine;
     public List<GameObject> tailStumps;
     public List<GameObject> spikes;
+    public GameObject neck;
 
 
 
@@ -508,6 +512,8 @@ public class NewObject : MonoBehaviour
         headP.x += Random.Range(0f, 1.5f);
         GameObject head = (GameObject)Instantiate(equipPrefab, headP, Quaternion.identity);
         head.transform.parent = tempVJoint.transform;
+        neck = head;
+        neck.name = "j0";
         createdObjects.Add(head);
         GameObject crocSkull = (GameObject)Instantiate(skulls[Random.Range(0,skulls.Count)], headP, Quaternion.Euler(new Vector3(0,180,0)));
         crocSkull.transform.parent = head.transform;
@@ -516,6 +522,36 @@ public class NewObject : MonoBehaviour
 
         //MeshRenderer meshRenderer = newBone.GetComponent<MeshRenderer>();
         //meshRenderer.bounds.SetMinMax(head.transform.position, head.transform.position);
+    }
+
+    public void HeadAnimationStage()
+    {
+        RigBuilder rigbuilder = currentSymPlane.GetComponent<RigBuilder>();
+        GameObject rig = new GameObject();
+        rig.transform.parent = currentSymPlane.transform;
+        Rig headRig = rig.AddComponent<Rig>();
+        rigbuilder.layers.Clear();
+        headTarget = rig;
+        rigbuilder.layers.Add(new RigLayer(headRig, true));
+        Vector3 position = createdObjects[createdObjects.Count - 1].transform.position;
+        position.x += 2;
+        rig.transform.position = position;
+        MultiAimConstraint constraint = rig.AddComponent<MultiAimConstraint>();
+        constraint.data.constrainedObject = neck.transform;
+        constraint.data.upAxis = MultiAimConstraintData.Axis.Y;
+        constraint.data.aimAxis = MultiAimConstraintData.Axis.X;
+        constraint.data.sourceObjects.Clear();
+        var sourceObject = rig.GetComponent<MultiAimConstraint>().data.sourceObjects;
+        sourceObject.Add(new WeightedTransform(rig.transform,1));
+        rigbuilder.layers[0].rig.GetComponent<MultiAimConstraint>().data.sourceObjects = sourceObject;
+        constraint.data.constrainedXAxis = true;
+        constraint.data.constrainedYAxis = true;
+        constraint.data.constrainedZAxis = true;
+        constraint.data.limits = new Vector2(-100, 100);
+        constraint.data.worldUpAxis = MultiAimConstraintData.Axis.Y;
+        rigbuilder.graph.Destroy();
+        rigbuilder.Build();
+        animated = true;
     }
 
     public symPair MirrorCreate(Transform symPlanT, Transform parent1T, Transform parent2T, float distanceX, float distanceY, float distanceZ)
@@ -619,6 +655,15 @@ public class NewObject : MonoBehaviour
        
         HeadStage();
         DrawBonesStage();
+        HeadAnimationStage();
         SaveCharacterStage();
+    }
+    private void Update()
+    {
+     if (animated)
+        {
+            Vector3 pivot = new Vector3(500, 0, 500);
+            headTarget.transform.RotateAround(pivot,Vector3.up, 10* Time.deltaTime);
+        }   
     }
 }
