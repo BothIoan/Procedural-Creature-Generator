@@ -152,7 +152,7 @@ There are now separate stages for:<br>
 ## Step 11
 
 ## Before >
-*Finally, the last complex functionality of the project, the machine learning. This can be approached in two ways.
+* Finally, the last complex functionality of the project, the machine learning. This can be approached in two ways.
 >I either do a big model containing all the possibilities, while zero-padding the others.<br> 
 >Or I do many smaller models, for each module.<br>
 For simplicity's sake, I started with the first approach, but now I think many smaller models are not only the more flexible and updatable solution, but also more easy to manage/ implement, as I won't have to think about the zero padding.<br>
