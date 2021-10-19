@@ -158,5 +158,26 @@ There are now separate stages for:<br>
 For simplicity's sake, I started with the first approach, but now I think many smaller models are not only the more flexible and updatable solution, but also more easy to manage/ implement, as I won't have to think about the zero padding.<br>
 
  * So My next move is to be able to serialize each module + the grammar. (Modules are quite similar, to the point where I think having them as a classes rather than methods, all inheriting some super class, would help a lot in the future.)
+ * Also I need to break the legs module into two separate modules (spidery/ not spidery, because the current way of doing this is not consistent)
 
+## After 
+* Ended up transforming all modules methods into classes, inheriting an interface. Now it works as before, with almost no overhead, and with the benefit that I can now add all modules in a list, together with it's structures, which will help for a truly flexible grammar.
+* The modules list also helps with having multiple ML constraint solvers, as I can do the required operations on lists as oposed to individual objects.
+* **At some point I must fix the legs generation, as it generates too weird legs almost half of the time**
+
+## Step 12
+
+## Before
+* I have calsses for each module. I should:
+  > Add a class serialization method.
+  > Implement some algorithm for auto-generation of the model, and add it to the generation method of each module
+
+## After 
+* I implemented and tested serialization.
+
+## Step 13
+
+## Before >
+* Maybe the values must be normalized, maybe they should be written in CSV, but besides that, the Unity side for input is over.
+* Now, I must first do my research, and then write a python script for one constraint solver.
  

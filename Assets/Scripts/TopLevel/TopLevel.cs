@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class TopLevel : MonoBehaviour
 {
+    //test
+    private List<IModule> iModules;
+    //test
+
 
     //ClassWiring
     private static SHelper sHelper;
@@ -30,6 +34,7 @@ public class TopLevel : MonoBehaviour
         sHelper = SHelper.Inst();
         setup = Setup.Inst();
         modules = Modules.Inst();
+        modules.InstModules();
         anim = Anim.Inst();
         topLevelHelper = THelper.Inst();
         eHelper = EHelper.Inst();
@@ -47,41 +52,43 @@ public class TopLevel : MonoBehaviour
         anim.ArmRiggingStage();
         anim.LegRiggingStage();
     }
+
     public void generationStage()
     {
-        if (fun)
-            sHelper.forFun();
+        if (fun) sHelper.forFun();
         topLevelHelper.Cleanup();
+        modules.Cleanup();
         setup.PlaneStage();
-        modules.HSpineStage();
+
+        modules.hSpine.Gen();
+        modules.head.SetInJoint(modules.hSpine.getOutJointL()[0]);
         if (Random.Range(0, 2) == 1)
         {
-            modules.TailStage();
+            modules.tail.Gen();
         }
-        modules.LegsStage();
-
+        if (Random.Range(0, 2) == 1)
+            modules.legs.Gen();
+        else
+            modules.spider.Gen();
         if (Random.Range(0, 2) == 1)
         {
-
-            modules.VSpineStage();
-            modules.ArmsStage();
+            modules.vSpine.Gen();
+            modules.arms.Gen();
             int random = Random.Range(0, 3);
             switch (random)
             {
                 case 0:
-                    modules.GenerativeWingsStage();
+                    modules.wings.Gen();
                     //ArchwingStage();
                     break;
                 case 1:
-                    modules.BatwingsStage();
+                    modules.batwings.Gen();
                     break;
             }
-
+            modules.head.SetInJoint(modules.vSpine.getOutJoint());
         }
-
-        modules.HeadStage();
+        modules.head.Gen();
         mHelper.DrawBonesStage();
-        Serializer.ForDebug();
     }
 
     public void pressButton()
@@ -89,6 +96,5 @@ public class TopLevel : MonoBehaviour
         generationStage();
         animationStage();
         eHelper.SaveCharacterStage();
-
     }
 }
