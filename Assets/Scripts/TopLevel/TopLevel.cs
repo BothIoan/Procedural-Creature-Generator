@@ -30,6 +30,7 @@ public class TopLevel : MonoBehaviour
 
     private void Awake()
     {
+        Categ.runScript();
         topLevel = this;
         sHelper = SHelper.Inst();
         setup = Setup.Inst();
