@@ -53,8 +53,8 @@ public class MHelper
 
     //dataB
     public bool spidery;
+    private int keyCounter = -1;
     //dataE
-
 
     //texturesB
     public GameObject joint;
@@ -156,6 +156,12 @@ public class MHelper
                 mHelper.lstBones.Add(newBone);
             }
         });
+    }
+
+    public int GetModuleKey()
+    {
+        keyCounter++;
+        return keyCounter;
     }
 
     //Methods (E)

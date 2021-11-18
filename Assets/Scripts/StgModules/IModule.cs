@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public abstract class IModule
 {
-    protected List<float> serializationList;
+    protected List<float> unnormFeatures;
+    public List<float> normFeatures;
+    private int index;
+    protected int padding = 0;
+    protected AutoResetEvent evt;
 
     protected MHelper mHelper;
     protected AHelper aHelper;
@@ -14,30 +19,45 @@ public abstract class IModule
     protected GameObject outJoint;
     protected List<GameObject> inJointL;
     protected List<GameObject> outJointL;
+    
 
     protected IModule parentModule;
 
-    public IModule(IModule parent, List<GameObject> outL = null)
+    protected int modKey = -1;
+    protected int featureCount;
+
+
+    //There are two constructors. When changing something pay attention to both of them
+    public IModule(int featureCount, IModule parent, List<GameObject> outL = null)
     {
         mHelper = MHelper.Inst();
         aHelper = AHelper.Inst();
         sHelper = SHelper.Inst();
 
-        serializationList = new List<float>();
+        evt = new AutoResetEvent(false);
+        unnormFeatures = new List<float>();
         outJointL = outL;
+        modKey = mHelper.GetModuleKey();
+        this.featureCount = featureCount;
+        MakeGan();
+
         parentModule = parent;
     }
-
-    public IModule(List<GameObject> outL = null)
+    public IModule(int featureCount,List<GameObject> outL = null)
     {
         mHelper = MHelper.Inst();
         aHelper = AHelper.Inst();
         sHelper = SHelper.Inst();
 
-        serializationList = new List<float>();
+        evt = new AutoResetEvent(false);
+        unnormFeatures = new List<float>();
         outJointL = outL;
+        modKey = mHelper.GetModuleKey();
+        this.featureCount = featureCount;
+        MakeGan();
     }
 
+    
     public void Cleanup()
     {
         inJoint = null;
@@ -46,25 +66,23 @@ public abstract class IModule
         inJointL.Clear();
         if(outJointL != null)
         outJointL.Clear();
+        unnormFeatures.Clear();
     }
-
     public abstract void Gen();
+ 
 
     public GameObject getOutJoint()
     {
         return outJoint;
     }
-
     public List<GameObject> getOutJointL()
     {
         return outJointL;
     }
-
     public void SetInJoint(GameObject iJ)
     {
         inJoint = iJ;
     }
-
     public void SetInJointL(List<GameObject> iJL)
     {
         inJointL = iJL;
@@ -73,4 +91,69 @@ public abstract class IModule
     {
         this.parentModule = parentModule;
     }
+
+    public void ReceiveGen(List<float> normFeatures)
+    {
+        this.normFeatures = normFeatures;
+        index = 0;
+        evt.Set();
+    }
+    public void DataToGan()
+    {
+        Categ.GiveDataTrue(modKey.ToString(), normFeatures);
+    }
+    public void GetDataGan()
+    {
+        if (featureCount == 0) return;
+        THelper.activeModules.Add(modKey, this);
+        Categ.RequestData(modKey.ToString());
+        evt.WaitOne();
+    }
+    public void MakeGan(){
+        Categ.MakeGan(modKey.ToString(), featureCount.ToString());
+    }
+
+    protected int RandOvr(int floor, int ceiling)
+    {
+        ceiling--;
+        int value = (int)(normFeatures[index] * (ceiling - floor) + floor);
+        index++;
+        unnormFeatures.Add(value);
+        return value;
+    }
+    protected float RandOvr(float floor, float ceiling)
+    {
+        float value = normFeatures[index] * (ceiling - floor) + floor;
+        index++;
+        unnormFeatures.Add(value);
+        return value;
+    }
+    //used together. For first getting a random number, and then adding max - actual 0s to the serializar
+    protected int RememberPadding(int floor, int ceiling)
+    {
+        int value = Random.Range(floor, ceiling);
+        
+        ceiling--;
+        padding = ceiling - value;
+        return value;
+    }
+    protected void AddPadding()
+    {
+        for (int i = 0; i < padding; i++)
+        {
+            unnormFeatures.Add(0);
+            normFeatures[index] = 0;
+            index++;
+        }
+    }
+    protected void AddPadding(int givenPadding)
+    {
+        for (int i = 0; i < givenPadding; i++)
+        {
+            unnormFeatures.Add(0);
+            normFeatures[index] = 0;
+            index++;
+        }
+    }
+    //used together.
 }

@@ -1,12 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Threading.Tasks;
 public class TopLevel : MonoBehaviour
 {
-    //test
-    private List<IModule> iModules;
-    //test
 
 
     //ClassWiring
@@ -30,7 +27,7 @@ public class TopLevel : MonoBehaviour
 
     private void Awake()
     {
-        Categ.runScript();
+        Categ.StartScript();
         topLevel = this;
         sHelper = SHelper.Inst();
         setup = Setup.Inst();
@@ -41,6 +38,7 @@ public class TopLevel : MonoBehaviour
         eHelper = EHelper.Inst();
         mHelper = MHelper.Inst();
         new Serializer();
+        MakeGans();
     }
 
     //SingletonConstructor
@@ -54,14 +52,19 @@ public class TopLevel : MonoBehaviour
         anim.LegRiggingStage();
     }
 
-    public void generationStage()
+    public void  generationStage()
     {
+
+        
         if (fun) sHelper.forFun();
         topLevelHelper.Cleanup();
         modules.Cleanup();
         setup.PlaneStage();
 
+        RequestGanAll();
+
         modules.hSpine.Gen();
+        
         modules.head.SetInJoint(modules.hSpine.getOutJointL()[0]);
         if (Random.Range(0, 2) == 1)
         {
@@ -92,10 +95,35 @@ public class TopLevel : MonoBehaviour
         mHelper.DrawBonesStage();
     }
 
-    public void pressButton()
+    public void PressButton()
     {
         generationStage();
         animationStage();
         eHelper.SaveCharacterStage();
+    }
+    public void DataToGan()
+    {
+        foreach (IModule x in THelper.activeModules.Values) x.DataToGan();
+    }
+
+    private void MakeGans()
+    {
+        foreach (IModule x in Modules.iModules)
+        {
+            x.MakeGan();
+        }
+    }
+
+    public void RequestGanAll()
+    {
+        foreach (IModule x in Modules.iModules)
+        {
+            x.GetDataGan();
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        Categ.EndScript();
     }
 }

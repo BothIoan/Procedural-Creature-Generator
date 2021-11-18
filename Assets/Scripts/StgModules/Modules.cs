@@ -3,6 +3,7 @@ using UnityEngine.Animations.Rigging;
 
 using System.Collections.Generic;
 using UnityEditor;
+using System.Threading.Tasks;
 public class Modules : MonoBehaviour
 {
     //temps
@@ -42,7 +43,6 @@ public class Modules : MonoBehaviour
         mHelper = MHelper.Inst();
         aHelper = AHelper.Inst();
         sHelper = SHelper.Inst();
-
         iModules = new List<IModule>();
     }
 
@@ -86,17 +86,16 @@ public class Modules : MonoBehaviour
 public class VSpineMod : IModule
 {
 
-    public VSpineMod(IModule parentModule, List<GameObject> outJointL) : base(parentModule,outJointL) { }
+    public VSpineMod(IModule parentModule, List<GameObject> outJointL) : base(4,parentModule,outJointL) { }
 
     public override void Gen()
     {
         SetInJoint(parentModule.getOutJointL()[0]);
-        Serializer.setSerializationList(serializationList);
 
-        int nrOfJoints = Serializer.RememberPadding(1, 3);
+        int nrOfJoints = RememberPadding(1, 3);
         Vector3 jointP = sHelper.symPlane.transform.position;
-        float distance = Serializer.RandOvr(1f, 1.5f);
-        float incline = Serializer.RandOvr(-1f, 1f);
+        float distance = RandOvr(1f, 1.5f);
+        float incline = RandOvr(-1f, 1f);
 
         for (int i = 0; i < nrOfJoints; i++)
         {
@@ -107,11 +106,11 @@ public class VSpineMod : IModule
             else joint.transform.parent = outJointL[i - 1].transform;
             mHelper.lstJoints.Add(joint);
             outJointL.Add(joint);
-            float distanceOffset = Serializer.RandOvr(2f, 3f);
+            float distanceOffset = RandOvr(2f, 3f);
             distance += distanceOffset;
             incline += incline;
         }
-        Serializer.AddPadding();
+        AddPadding();
         outJoint = outJointL[nrOfJoints - 1];
         
     }
@@ -119,20 +118,19 @@ public class VSpineMod : IModule
 
 public class HSpineMod: IModule
 {
-    public HSpineMod(List<GameObject> outJointL) : base(outJointL) { }
+    public HSpineMod(List<GameObject> outJointL) : base(6,outJointL) { }
     //inJoint is last joint (for tail)
     //inJointL[0] is first joint (for head/ Vspine)
 
-
     public override void Gen()
     {
-        Serializer.setSerializationList(serializationList);
-
-        int nrOfJoints = Serializer.RememberPadding(1, 5);
+        
+        int nrOfJoints = RememberPadding(1, 5); 
         Vector3 jointP = sHelper.symPlane.transform.position;
-        jointP.y += Serializer.RandOvr(1f, -1f);
+        jointP.y += RandOvr(1f, -1f);
+        
         float distance = 0;
-        float incline = Serializer.RandOvr(-0.5f, 0.5f);
+        float incline = RandOvr(-0.5f, 0.5f);
         for (int i = 0; i < nrOfJoints; i++)
         {
             jointP.y = sHelper.symPlane.transform.position.y + incline;
@@ -142,132 +140,126 @@ public class HSpineMod: IModule
             else joint.transform.parent = outJointL[i - 1].transform;
             mHelper.lstJoints.Add(joint);
             outJointL.Add(joint);
-            distance += Serializer.RandOvr(-2f, -3f);
+            distance += RandOvr(-2f, -3f);
             incline += incline;
         }
-        Serializer.AddPadding();
+        AddPadding();
         outJoint = outJointL[nrOfJoints - 1];
-        Serializer.writeToFile();
     }
 
 }
 
 public class LegsMod: IModule
 {
-    public LegsMod(IModule parentModule) : base(parentModule) { }
+    public LegsMod(IModule parentModule) : base(26,parentModule) { }
 
     public override void Gen()
     {
         SetInJointL(parentModule.getOutJointL());
-        Serializer.setSerializationList(serializationList);
 
         //legs must happen between the current point and the ground.
         float yDown = 0.1f;
         //choose position of knee:
         float yUp = sHelper.symPlane.transform.position.y;
-        float kneeY = Serializer.RandOvr(yUp, yDown);
-        kneeY = Serializer.RandOvr(yUp, yDown);
+        float kneeY = RandOvr(yUp, yDown);
 
         aHelper.legReferences = new List<GameObject>();
 
-        float distanceZ = Serializer.RandOvr(0f, 3f);
+        float distanceZ = RandOvr(0f, 3f);
         inJointL.ForEach(x =>
         {
-            int nrLegsCurrentJoint = Serializer.RememberPadding(1, 3);
+            int nrLegsCurrentJoint = RememberPadding(1, 3);
             for (int i = 0; i < nrLegsCurrentJoint; i++)
             {
-                float distanceX = Serializer.RandOvr(0f, -1.5f);
+                float distanceX = RandOvr(0f, -1.5f);
                 MHelper.symPair firstJoint = mHelper.MirrorCreate(x.transform, x.transform, x.transform, 0, 0, distanceZ, mHelper.lstJoints);
-                MHelper.symPair secondJoint = mHelper.MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX, kneeY, distanceZ + Serializer.RandOvr(0f, 1f), mHelper.lstJoints);
-                MHelper.symPair thirdJoint = mHelper.MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, sHelper.currentDSign * (distanceX + Serializer.RandOvr(0f, 1f)), x.transform.position.y, distanceZ, mHelper.lstJoints);
+                MHelper.symPair secondJoint = mHelper.MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX, kneeY, distanceZ + RandOvr(0f, 1f), mHelper.lstJoints);
+                MHelper.symPair thirdJoint = mHelper.MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, sHelper.currentDSign * (distanceX + RandOvr(0f, 1f)), x.transform.position.y, distanceZ, mHelper.lstJoints);
                 mHelper.MirrorCreate(x.transform, thirdJoint.transform1, thirdJoint.transform2, sHelper.currentDSign * (distanceX + 1) - 1, x.transform.position.y, distanceZ, mHelper.lstJoints);
                 aHelper.legReferences.Add(mHelper.lstJoints[mHelper.lstJoints.Count - 1]);
                 aHelper.legReferences.Add(mHelper.lstJoints[mHelper.lstJoints.Count - 2]);
             }
-            Serializer.AddPadding(Serializer.padding * 3);
+            AddPadding(padding * 3);
         });
-        Serializer.AddPadding((4 - inJointL.Count) * 6);
+        AddPadding((4 - inJointL.Count) * 6);
     }
 }
 
 public class SpiderLegsMod : IModule
 {
-    public SpiderLegsMod(IModule parentModule) : base(parentModule) { }
+    public SpiderLegsMod(IModule parentModule) : base(40,parentModule) { }
 
     public override void Gen()
     {
         SetInJointL(parentModule.getOutJointL());
-        Serializer.setSerializationList(serializationList);
 
         //legs must happen between the current point and the ground.
         //choose position of knee:
-        float kneeY = Serializer.RandOvr(-1f, -3f);
-        float kneeY2 = kneeY + Serializer.RandOvr(1f, 2f);
-        float kneeY3 = kneeY2 + Serializer.RandOvr(1f, 2f);
+        float kneeY = RandOvr(-1f, -3f);
+        float kneeY2 = kneeY + RandOvr(1f, 2f);
+        float kneeY3 = kneeY2 + RandOvr(1f, 2f);
         float yUp = sHelper.symPlane.transform.position.y;
         aHelper.legReferences = new List<GameObject>();
-        float distanceZ = Serializer.RandOvr(0f, 3f);
+        float distanceZ = RandOvr(0f, 3f);
         inJointL.ForEach(x =>
         {
-            float distanceX = Serializer.RandOvr(0f, -1.5f);
+            float distanceX = RandOvr(0f, -1.5f);
             for (int i = 0; i < 2; i++)
             {
                 if (i == 1) distanceX *= -1;
                 MHelper.symPair firstJoint = mHelper.MirrorCreate(x.transform, x.transform, x.transform, 0, 0, distanceZ, mHelper.lstJoints);
-                MHelper.symPair secondJoint = mHelper.MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX, kneeY, distanceZ + Serializer.RandOvr(0f, 1f), mHelper.lstJoints);
-                MHelper.symPair thirdJoint = mHelper.MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, distanceX, kneeY2, distanceZ + Serializer.RandOvr(1f, 2f), mHelper.lstJoints);
-                MHelper.symPair fourthJoint = mHelper.MirrorCreate(x.transform, thirdJoint.transform1, thirdJoint.transform2, distanceX, kneeY3, distanceZ + Serializer.RandOvr(1f, 2f), mHelper.lstJoints);
-                mHelper.MirrorCreate(x.transform, fourthJoint.transform1, fourthJoint.transform2, sHelper.currentDSign * (distanceX + Serializer.RandOvr(0f, 1f)), x.transform.position.y, distanceZ, mHelper.lstSpikes);
+                MHelper.symPair secondJoint = mHelper.MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX, kneeY, distanceZ + RandOvr(0f, 1f), mHelper.lstJoints);
+                MHelper.symPair thirdJoint = mHelper.MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, distanceX, kneeY2, distanceZ + RandOvr(1f, 2f), mHelper.lstJoints);
+                MHelper.symPair fourthJoint = mHelper.MirrorCreate(x.transform, thirdJoint.transform1, thirdJoint.transform2, distanceX, kneeY3, distanceZ + RandOvr(1f, 2f), mHelper.lstJoints);
+                mHelper.MirrorCreate(x.transform, fourthJoint.transform1, fourthJoint.transform2, sHelper.currentDSign * (distanceX + RandOvr(0f, 1f)), x.transform.position.y, distanceZ, mHelper.lstSpikes);
                 aHelper.legReferences.Add(mHelper.lstSpikes[mHelper.lstSpikes.Count - 1]);
                 aHelper.legReferences.Add(mHelper.lstSpikes[mHelper.lstSpikes.Count - 2]);
             }
         });
-        Serializer.AddPadding((4 - inJointL.Count) * 9);
+        AddPadding((4 - inJointL.Count) * 9);
         //5;
     }
 }
 
 public class ArmsMod : IModule
 {
-    public ArmsMod(IModule parentModule) : base(parentModule) { }
+    public ArmsMod(IModule parentModule) : base(28,parentModule) { }
 
     public override void Gen()
     {
         SetInJointL(parentModule.getOutJointL());
-        Serializer.setSerializationList(serializationList);
 
         inJointL.ForEach(x =>
         {
-            int nrArmsCurrentJoint = Serializer.RememberPadding(1, 3);
+            int nrArmsCurrentJoint = RememberPadding(1, 3);
             for (int i = 0; i < nrArmsCurrentJoint; i++)
             {
-                float armKnee = Serializer.RandOvr(1f, 2f);
-                float distanceZ = Serializer.RandOvr(0.1f, 0.5f);
-                float distanceX = Serializer.RandOvr(0.5f, -2f);
+                float armKnee = RandOvr(1f, 2f);
+                float distanceZ = RandOvr(0.1f, 0.5f);
+                float distanceX = RandOvr(0.5f, -2f);
                 MHelper.symPair firstJoint = mHelper.MirrorCreate(x.transform, x.transform, x.transform, 0, 0, distanceZ, mHelper.lstJoints);
-                MHelper.symPair secondJoint = mHelper.MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX, Serializer.RandOvr(0.5f, 1f), distanceZ + armKnee, mHelper.lstJoints);
-                mHelper.MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, distanceX + Serializer.RandOvr(-0.5f, -1f), Serializer.RandOvr(0.5f, 1f), Serializer.RandOvr(0, distanceZ + armKnee), mHelper.lstJoints);
+                MHelper.symPair secondJoint = mHelper.MirrorCreate(x.transform, firstJoint.transform1, firstJoint.transform2, distanceX, RandOvr(0.5f, 1f), distanceZ + armKnee, mHelper.lstJoints);
+                mHelper.MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, distanceX + RandOvr(-0.5f, -1f), RandOvr(0.5f, 1f), RandOvr(0, 2.5f), mHelper.lstJoints);
                 aHelper.armReferences.Add(mHelper.lstJoints[mHelper.lstJoints.Count - 1]);
                 aHelper.armReferences.Add(mHelper.lstJoints[mHelper.lstJoints.Count - 2]);
                 //aici am ramas. Probabil mai tre padding
             }
-            Serializer.AddPadding(Serializer.padding * 7);
+            AddPadding(padding * 7);
         });
         // There are some design decisions to be taken, about variables computed in other modules. But in a more polished version, chosen max values would be accessible.
         // For now it's hardcoded, like the rest.
-        Serializer.AddPadding((2 - inJointL.Count)* 14 );
+        AddPadding((2 - inJointL.Count)* 14 );
     }
 }
 
 public class ArchwingMod : IModule
 {
-    public ArchwingMod(IModule parentModule) : base(parentModule) { }
+    public ArchwingMod(IModule parentModule) : base(0,parentModule) { }
 
     public override void Gen()
     {
         SetInJoint(parentModule.getOutJoint());
         SetInJointL(parentModule.getOutJointL());
-        Serializer.setSerializationList(serializationList);
 
         float x = 0;
         float y = -0.5f;
@@ -330,12 +322,11 @@ public class ArchwingMod : IModule
 
 public class BatwingsMod: IModule
 {
-    public BatwingsMod(IModule parentModule) : base(parentModule) { }
+    public BatwingsMod(IModule parentModule) : base(0,parentModule) { }
 
     public override void Gen()
     {
         SetInJoint(parentModule.getOutJoint());
-        Serializer.setSerializationList(serializationList);
 
         float x = 1;
         float y = -1.5f;
@@ -403,19 +394,18 @@ public class BatwingsMod: IModule
 
 public class WingsMod: IModule
 {
-    public WingsMod(IModule parentModule) : base(parentModule) { }
+    public WingsMod(IModule parentModule) : base(16,parentModule) { }
 
     public override void Gen()
     {
         SetInJoint(parentModule.getOutJoint());
-        Serializer.setSerializationList(serializationList);
 
-        float distance = Serializer.RandOvr(1.5f, 1.75f);
-        float logIncline = Serializer.RandOvr(-0f, -0.1f);
-        float linearDifference = Serializer.RandOvr(-0.25f, -0.5f);
+        float distance = RandOvr(1.5f, 1.75f);
+        float logIncline = RandOvr(-0f, -0.1f);
+        float linearDifference = RandOvr(-0.25f, -0.5f);
         float linearIncline = linearDifference;
-        float offset = Serializer.RandOvr(-0.5f, -1f);
-        int nrJoints = Serializer.RememberPadding(5, 8);
+        float offset = RandOvr(-0.5f, -1f);
+        int nrJoints = RememberPadding(5, 8);
         List<MHelper.symPair> joints = new List<MHelper.symPair>();
         MHelper.symPair parent = new MHelper.symPair(inJoint.transform, inJoint.transform);
 
@@ -426,18 +416,18 @@ public class WingsMod: IModule
             joints.Add(parent);
             logIncline += logIncline;
             linearIncline += linearDifference;
-            distance += Serializer.RandOvr(1.5f, 2f);
+            distance += RandOvr(1.5f, 2f);
         }
-        Serializer.AddPadding();
+        AddPadding();
 
         //pene
-        float yLinearDistance = Serializer.RandOvr(0.5f, 1f);
-        float zLinearDistance = Serializer.RandOvr(0.5f, 0f);
-        int maximaPoint = Serializer.RandOvr((nrJoints / 2) + 1, nrJoints - 1) - 1;
-        float yLogIncline = Serializer.RandOvr(+0.2f, +0.5f);
+        float yLinearDistance = RandOvr(0.5f, 1f);
+        float zLinearDistance = RandOvr(0.5f, 0f);
+        int maximaPoint = nrJoints / 2 + RandOvr(0, 2);
+        float yLogIncline = RandOvr(+0.2f, +0.5f);
         float firstCoef = 2;
         float secondCoef = 2;
-        float zLogIncline = Serializer.RandOvr(0.01f, 0.012f);
+        float zLogIncline = RandOvr(0.01f, 0.012f);
         for (int i = 0; i < nrJoints; i++)
         {
             zLogIncline += zLogIncline;
@@ -470,22 +460,22 @@ public class WingsMod: IModule
 
 public class HeadMod: IModule
 {
-    public HeadMod(IModule parentModule) : base(parentModule) { }
+    public HeadMod(IModule parentModule) : base(3,parentModule) { }
 
     public override void Gen()
     {
         //SetInJoint(parentModule.getOutJoint());
-        Serializer.setSerializationList(serializationList);
 
+        //Stack<float> rands = Categ.GetInfo();
         Vector3 headP = inJoint.transform.position;
-        headP.y += Serializer.RandOvr(0f, 1.5f);
-        headP.x += Serializer.RandOvr(0f, 1.5f);
+        headP.y += RandOvr(0f, 1.5f);
+        headP.x += RandOvr(0f, 1.5f);
         GameObject head = Object.Instantiate(mHelper.joint, headP, Quaternion.identity);
         head.transform.parent = inJoint.transform;
         head.name = "j0";
         aHelper.neck = head;
         mHelper.lstJoints.Add(head);
-        GameObject skull = Object.Instantiate(mHelper.skulls[Serializer.RandOvr(0, mHelper.skulls.Count)], headP, Quaternion.Euler(new Vector3(0, 180, 0)));
+        GameObject skull = Object.Instantiate(mHelper.skulls[(RandOvr(0, mHelper.skulls.Count)) ], headP, Quaternion.Euler(new Vector3(0, 180, 0)));
         skull.transform.parent = head.transform;
         mHelper.lstJoints.Add(skull);
     }
@@ -493,15 +483,14 @@ public class HeadMod: IModule
 
 public class TailMod : IModule
 {
-    public TailMod(IModule parentModule) : base(parentModule) { }
+    public TailMod(IModule parentModule) : base(2,parentModule) { }
 
     public override void Gen()
     {
-        Serializer.setSerializationList(serializationList);
         SetInJoint(parentModule.getOutJoint());
 
-        float xDistance = Serializer.RandOvr(-1f, -1.5f);
-        int nrSegments = Serializer.RandOvr(4, 11);
+        float xDistance = RandOvr(-1f, -1.5f);
+        int nrSegments = RandOvr(4, 11);
         // aici tre pus in-u
         Transform parent = inJoint.transform;
         Vector3 position = parent.transform.position;
