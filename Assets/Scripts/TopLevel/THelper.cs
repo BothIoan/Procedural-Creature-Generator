@@ -18,6 +18,7 @@ public class THelper
             mHelper = MHelper.Inst();
             aHelper = AHelper.Inst();
             activeModules = new Dictionary<int, IModule>();
+            
         }
         return tHelper;
     }
@@ -30,6 +31,8 @@ public class THelper
     //ListsB
     public static Dictionary<int,IModule> activeModules;
     //ListsE
+
+
 
     //Methods (B)
     public void Cleanup()

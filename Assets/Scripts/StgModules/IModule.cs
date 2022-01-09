@@ -9,7 +9,7 @@ public abstract class IModule
     public List<float> normFeatures;
     private int index;
     protected int padding = 0;
-    protected AutoResetEvent evt;
+    public AutoResetEvent evt;
 
     protected MHelper mHelper;
     protected AHelper aHelper;
@@ -39,7 +39,6 @@ public abstract class IModule
         outJointL = outL;
         modKey = mHelper.GetModuleKey();
         this.featureCount = featureCount;
-        MakeGan();
 
         parentModule = parent;
     }
@@ -54,7 +53,6 @@ public abstract class IModule
         outJointL = outL;
         modKey = mHelper.GetModuleKey();
         this.featureCount = featureCount;
-        MakeGan();
     }
 
     
@@ -107,6 +105,7 @@ public abstract class IModule
         if (featureCount == 0) return;
         THelper.activeModules.Add(modKey, this);
         Categ.RequestData(modKey.ToString());
+        Debug.Log(Thread.CurrentThread.ManagedThreadId);
         evt.WaitOne();
     }
     public void MakeGan(){
@@ -115,7 +114,6 @@ public abstract class IModule
 
     protected int RandOvr(int floor, int ceiling)
     {
-        ceiling--;
         int value = (int)(normFeatures[index] * (ceiling - floor) + floor);
         index++;
         unnormFeatures.Add(value);
@@ -131,9 +129,10 @@ public abstract class IModule
     //used together. For first getting a random number, and then adding max - actual 0s to the serializar
     protected int RememberPadding(int floor, int ceiling)
     {
-        int value = Random.Range(floor, ceiling);
-        
         ceiling--;
+        int value = (int)(normFeatures[index] * (ceiling - floor) + floor);
+        index++;
+        unnormFeatures.Add(value);
         padding = ceiling - value;
         return value;
     }

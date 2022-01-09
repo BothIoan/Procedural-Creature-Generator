@@ -37,6 +37,7 @@ public class TopLevel : MonoBehaviour
         topLevelHelper = THelper.Inst();
         eHelper = EHelper.Inst();
         mHelper = MHelper.Inst();
+        
         new Serializer();
         MakeGans();
     }
@@ -66,19 +67,19 @@ public class TopLevel : MonoBehaviour
         modules.hSpine.Gen();
         
         modules.head.SetInJoint(modules.hSpine.getOutJointL()[0]);
-        if (Random.Range(0, 2) == 1)
+        if (modules.grammar.Rand(0, 2) == 1)
         {
             modules.tail.Gen();
         }
-        if (Random.Range(0, 2) == 1)
+        if (modules.grammar.Rand(0, 2) == 1)
             modules.legs.Gen();
         else
             modules.spider.Gen();
-        if (Random.Range(0, 2) == 1)
+        if (modules.grammar.Rand(0, 2) == 1)
         {
             modules.vSpine.Gen();
             modules.arms.Gen();
-            int random = Random.Range(0, 3);
+            int random = modules.grammar.Rand(0, 3);
             switch (random)
             {
                 case 0:
@@ -116,10 +117,11 @@ public class TopLevel : MonoBehaviour
 
     public void RequestGanAll()
     {
-        foreach (IModule x in Modules.iModules)
-        {
-            x.GetDataGan();
-        }
+        //foreach (IModule x in Modules.iModules)
+        //{
+        //    x.GetDataGan();
+        //}
+        Modules.iModules[0].GetDataGan();
     }
 
     private void OnApplicationQuit()

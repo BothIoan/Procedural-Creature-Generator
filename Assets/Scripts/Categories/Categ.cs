@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 
 public class Categ
@@ -41,6 +42,7 @@ public class Categ
 
     public static void RequestData(string moduleKey)
     {
+        Debug.Log(moduleKey);
         //request info from gan
         scriptInput.WriteLine("g " + moduleKey);
         
@@ -48,7 +50,9 @@ public class Categ
 
     public static void ReceiveData(object sender, System.Diagnostics.DataReceivedEventArgs args)
     {
+        Debug.Log(Thread.CurrentThread.ManagedThreadId);
         string sData = args.Data;
+        Debug.Log(sData);
         List<float> lData = Array.ConvertAll(sData.Split(new char[] { ',' },StringSplitOptions.RemoveEmptyEntries), float.Parse).ToList();
         THelper.activeModules[(int)lData[0]].ReceiveGen(lData.Skip(1).ToList());   
     }

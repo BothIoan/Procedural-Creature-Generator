@@ -18,6 +18,7 @@ public class Modules : MonoBehaviour
     public WingsMod wings;
     public BatwingsMod batwings;
     public HeadMod head;
+    public GrammarMod grammar;
     //temps
 
 
@@ -53,6 +54,7 @@ public class Modules : MonoBehaviour
     //Methods (B)
     public void InstModules()
     {
+        grammar = new GrammarMod();
         hSpine = new HSpineMod(new List<GameObject>());
         tail = new TailMod(hSpine);
         legs = new LegsMod(hSpine);
@@ -63,6 +65,7 @@ public class Modules : MonoBehaviour
         batwings = new BatwingsMod(vSpine);
         head = new HeadMod(hSpine);
 
+        iModules.Add(grammar);
         iModules.Add(hSpine);
         iModules.Add(tail);
         iModules.Add(legs);
@@ -86,7 +89,7 @@ public class Modules : MonoBehaviour
 public class VSpineMod : IModule
 {
 
-    public VSpineMod(IModule parentModule, List<GameObject> outJointL) : base(4,parentModule,outJointL) { }
+    public VSpineMod(IModule parentModule, List<GameObject> outJointL) : base(5,parentModule,outJointL) { }
 
     public override void Gen()
     {
@@ -118,7 +121,7 @@ public class VSpineMod : IModule
 
 public class HSpineMod: IModule
 {
-    public HSpineMod(List<GameObject> outJointL) : base(6,outJointL) { }
+    public HSpineMod(List<GameObject> outJointL) : base(7,outJointL) { }
     //inJoint is last joint (for tail)
     //inJointL[0] is first joint (for head/ Vspine)
 
@@ -151,7 +154,7 @@ public class HSpineMod: IModule
 
 public class LegsMod: IModule
 {
-    public LegsMod(IModule parentModule) : base(26,parentModule) { }
+    public LegsMod(IModule parentModule) : base(30,parentModule) { }
 
     public override void Gen()
     {
@@ -181,7 +184,7 @@ public class LegsMod: IModule
             }
             AddPadding(padding * 3);
         });
-        AddPadding((4 - inJointL.Count) * 6);
+        AddPadding((4 - inJointL.Count) * 7);
     }
 }
 
@@ -223,7 +226,7 @@ public class SpiderLegsMod : IModule
 
 public class ArmsMod : IModule
 {
-    public ArmsMod(IModule parentModule) : base(28,parentModule) { }
+    public ArmsMod(IModule parentModule) : base(29,parentModule) { }
 
     public override void Gen()
     {
@@ -394,7 +397,7 @@ public class BatwingsMod: IModule
 
 public class WingsMod: IModule
 {
-    public WingsMod(IModule parentModule) : base(16,parentModule) { }
+    public WingsMod(IModule parentModule) : base(17,parentModule) { }
 
     public override void Gen()
     {
