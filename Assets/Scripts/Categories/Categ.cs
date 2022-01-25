@@ -30,6 +30,7 @@ public class Categ
             Debug.LogError(e.Data);
         });
         process.Start();
+        process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
         scriptInput = process.StandardInput;
@@ -42,7 +43,6 @@ public class Categ
 
     public static void RequestData(string moduleKey)
     {
-        Debug.Log(moduleKey);
         //request info from gan
         scriptInput.WriteLine("g " + moduleKey);
         
@@ -50,9 +50,12 @@ public class Categ
 
     public static void ReceiveData(object sender, System.Diagnostics.DataReceivedEventArgs args)
     {
-        Debug.Log(Thread.CurrentThread.ManagedThreadId);
         string sData = args.Data;
-        Debug.Log(sData);
+        if (sData[0].Equals('g'))
+        {
+            THelper.activeModules[int.Parse(sData.Substring(1))].ReceiveGanMade();
+            return;
+        }
         List<float> lData = Array.ConvertAll(sData.Split(new char[] { ',' },StringSplitOptions.RemoveEmptyEntries), float.Parse).ToList();
         THelper.activeModules[(int)lData[0]].ReceiveGen(lData.Skip(1).ToList());   
     }

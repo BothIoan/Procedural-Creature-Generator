@@ -14,6 +14,7 @@ public class THelper
     {
         if (tHelper == null)
         {
+            button = GameObject.Find("CreateBone");
             tHelper = new THelper();
             mHelper = MHelper.Inst();
             aHelper = AHelper.Inst();
@@ -32,6 +33,8 @@ public class THelper
     public static Dictionary<int,IModule> activeModules;
     //ListsE
 
+    //uiElements
+    public static GameObject button;
 
 
     //Methods (B)
@@ -56,7 +59,6 @@ public class THelper
         aHelper.refrencesCleanup();
         aHelper.armsAnimated = false;
         aHelper.increase = true;
-        activeModules.Clear();
     }
     //Methods (E)
 }

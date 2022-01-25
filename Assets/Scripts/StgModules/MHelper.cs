@@ -56,6 +56,10 @@ public class MHelper
     private int keyCounter = -1;
     //dataE
 
+    //flagsB
+    public bool ganGenerated = false;
+    //flagsE
+
     //texturesB
     public GameObject joint;
     public GameObject spike;

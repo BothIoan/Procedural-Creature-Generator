@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 public class TopLevel : MonoBehaviour
 {
 
-
     //ClassWiring
     private static SHelper sHelper;
     private static EHelper eHelper;
@@ -37,14 +36,22 @@ public class TopLevel : MonoBehaviour
         topLevelHelper = THelper.Inst();
         eHelper = EHelper.Inst();
         mHelper = MHelper.Inst();
-        
+
+        THelper.button.SetActive(false);
         new Serializer();
+        THelper.button.SetActive(false);
         MakeGans();
+        THelper.button.SetActive(true);
     }
 
     //SingletonConstructor
 
     [SerializeField] public bool fun;
+    public void toggleGenStrategy()
+    {
+        mHelper.ganGenerated = !mHelper.ganGenerated;
+    }
+
 
     public void animationStage()
     {
@@ -67,19 +74,19 @@ public class TopLevel : MonoBehaviour
         modules.hSpine.Gen();
         
         modules.head.SetInJoint(modules.hSpine.getOutJointL()[0]);
-        if (modules.grammar.Rand(0, 2) == 1)
+        if (modules.grammar.Rand(0, 1) == 0)
         {
             modules.tail.Gen();
         }
-        if (modules.grammar.Rand(0, 2) == 1)
+        if (modules.grammar.Rand(0, 1) == 0)
             modules.legs.Gen();
         else
             modules.spider.Gen();
-        if (modules.grammar.Rand(0, 2) == 1)
+        if (modules.grammar.Rand(0, 1) == 0)
         {
             modules.vSpine.Gen();
             modules.arms.Gen();
-            int random = modules.grammar.Rand(0, 3);
+            int random = modules.grammar.Rand(0, 2);
             switch (random)
             {
                 case 0:
@@ -117,11 +124,10 @@ public class TopLevel : MonoBehaviour
 
     public void RequestGanAll()
     {
-        //foreach (IModule x in Modules.iModules)
-        //{
-        //    x.GetDataGan();
-        //}
-        Modules.iModules[0].GetDataGan();
+        foreach (IModule x in THelper.activeModules.Values)
+        {
+            x.GetDataGan();
+        }
     }
 
     private void OnApplicationQuit()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -9,7 +10,7 @@ public abstract class IModule
     public List<float> normFeatures;
     private int index;
     protected int padding = 0;
-    public AutoResetEvent evt;
+    protected AutoResetEvent evt;
 
     protected MHelper mHelper;
     protected AHelper aHelper;
@@ -101,20 +102,40 @@ public abstract class IModule
         Categ.GiveDataTrue(modKey.ToString(), normFeatures);
     }
     public void GetDataGan()
-    {
+    {   
+        if (mHelper.ganGenerated)
+        {
+            Categ.RequestData(modKey.ToString());
+            evt.WaitOne();
+        }
+        else
+        {
+            normFeatures = new List<float>();
+            for (int i = 0; i < featureCount; i++)
+            {
+                normFeatures.Add(UnityEngine.Random.Range(0f, 1f));
+            }
+            index = 0;
+            return;
+        }
+        
+    }
+
+    public void MakeGan(){
         if (featureCount == 0) return;
         THelper.activeModules.Add(modKey, this);
-        Categ.RequestData(modKey.ToString());
-        Debug.Log(Thread.CurrentThread.ManagedThreadId);
+        Categ.MakeGan(modKey.ToString(), featureCount.ToString());
         evt.WaitOne();
     }
-    public void MakeGan(){
-        Categ.MakeGan(modKey.ToString(), featureCount.ToString());
+
+    public void ReceiveGanMade()
+    {
+        evt.Set();
     }
 
     protected int RandOvr(int floor, int ceiling)
     {
-        int value = (int)(normFeatures[index] * (ceiling - floor) + floor);
+        int value = (int)Math.Round(normFeatures[index] * (ceiling - floor) + floor);
         index++;
         unnormFeatures.Add(value);
         return value;
@@ -130,7 +151,7 @@ public abstract class IModule
     protected int RememberPadding(int floor, int ceiling)
     {
         ceiling--;
-        int value = (int)(normFeatures[index] * (ceiling - floor) + floor);
+        int value = (int)Math.Round(normFeatures[index] * (ceiling - floor) + floor);
         index++;
         unnormFeatures.Add(value);
         padding = ceiling - value;
@@ -151,6 +172,7 @@ public abstract class IModule
         {
             unnormFeatures.Add(0);
             normFeatures[index] = 0;
+            
             index++;
         }
     }

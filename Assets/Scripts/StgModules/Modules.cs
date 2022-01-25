@@ -6,6 +6,10 @@ using UnityEditor;
 using System.Threading.Tasks;
 public class Modules : MonoBehaviour
 {
+
+
+
+
     //temps
     public static List<IModule> iModules;
 
@@ -98,7 +102,7 @@ public class VSpineMod : IModule
         int nrOfJoints = RememberPadding(1, 3);
         Vector3 jointP = sHelper.symPlane.transform.position;
         float distance = RandOvr(1f, 1.5f);
-        float incline = RandOvr(-1f, 1f);
+        float incline = RandOvr(0f, 2f);
 
         for (int i = 0; i < nrOfJoints; i++)
         {
@@ -147,7 +151,7 @@ public class HSpineMod: IModule
             incline += incline;
         }
         AddPadding();
-        outJoint = outJointL[nrOfJoints - 1];
+        outJoint = outJointL[outJointL.Count-1];
     }
 
 }
@@ -161,10 +165,10 @@ public class LegsMod: IModule
         SetInJointL(parentModule.getOutJointL());
 
         //legs must happen between the current point and the ground.
-        float yDown = 0.1f;
+        float yDown = 0.2f;
         //choose position of knee:
         float yUp = sHelper.symPlane.transform.position.y;
-        float kneeY = RandOvr(yUp, yDown);
+        float kneeY = RandOvr(yUp/2, yDown);
 
         aHelper.legReferences = new List<GameObject>();
 
@@ -226,12 +230,11 @@ public class SpiderLegsMod : IModule
 
 public class ArmsMod : IModule
 {
-    public ArmsMod(IModule parentModule) : base(29,parentModule) { }
+    public ArmsMod(IModule parentModule) : base(30,parentModule) { }
 
     public override void Gen()
     {
         SetInJointL(parentModule.getOutJointL());
-
         inJointL.ForEach(x =>
         {
             int nrArmsCurrentJoint = RememberPadding(1, 3);
@@ -245,13 +248,10 @@ public class ArmsMod : IModule
                 mHelper.MirrorCreate(x.transform, secondJoint.transform1, secondJoint.transform2, distanceX + RandOvr(-0.5f, -1f), RandOvr(0.5f, 1f), RandOvr(0, 2.5f), mHelper.lstJoints);
                 aHelper.armReferences.Add(mHelper.lstJoints[mHelper.lstJoints.Count - 1]);
                 aHelper.armReferences.Add(mHelper.lstJoints[mHelper.lstJoints.Count - 2]);
-                //aici am ramas. Probabil mai tre padding
             }
             AddPadding(padding * 7);
         });
-        // There are some design decisions to be taken, about variables computed in other modules. But in a more polished version, chosen max values would be accessible.
-        // For now it's hardcoded, like the rest.
-        AddPadding((2 - inJointL.Count)* 14 );
+        AddPadding((2 - inJointL.Count)* 15 );
     }
 }
 
@@ -411,7 +411,6 @@ public class WingsMod: IModule
         int nrJoints = RememberPadding(5, 8);
         List<MHelper.symPair> joints = new List<MHelper.symPair>();
         MHelper.symPair parent = new MHelper.symPair(inJoint.transform, inJoint.transform);
-
         //bota
         for (int i = 0; i < nrJoints; i++)
         {
@@ -471,14 +470,14 @@ public class HeadMod: IModule
 
         //Stack<float> rands = Categ.GetInfo();
         Vector3 headP = inJoint.transform.position;
-        headP.y += RandOvr(0f, 1.5f);
-        headP.x += RandOvr(0f, 1.5f);
+        headP.y += RandOvr(0f, 2f);
+        headP.x += RandOvr(0f, 2f);
         GameObject head = Object.Instantiate(mHelper.joint, headP, Quaternion.identity);
         head.transform.parent = inJoint.transform;
         head.name = "j0";
         aHelper.neck = head;
         mHelper.lstJoints.Add(head);
-        GameObject skull = Object.Instantiate(mHelper.skulls[(RandOvr(0, mHelper.skulls.Count)) ], headP, Quaternion.Euler(new Vector3(0, 180, 0)));
+        GameObject skull = Object.Instantiate(mHelper.skulls[(RandOvr(0, mHelper.skulls.Count-1)) ], headP, Quaternion.Euler(new Vector3(0, 180, 0)));
         skull.transform.parent = head.transform;
         mHelper.lstJoints.Add(skull);
     }
