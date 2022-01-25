@@ -6,7 +6,6 @@ using UnityEngine;
 
 public abstract class IModule
 {
-    protected List<float> unnormFeatures;
     public List<float> normFeatures;
     private int index;
     protected int padding = 0;
@@ -36,7 +35,6 @@ public abstract class IModule
         sHelper = SHelper.Inst();
 
         evt = new AutoResetEvent(false);
-        unnormFeatures = new List<float>();
         outJointL = outL;
         modKey = mHelper.GetModuleKey();
         this.featureCount = featureCount;
@@ -50,7 +48,6 @@ public abstract class IModule
         sHelper = SHelper.Inst();
 
         evt = new AutoResetEvent(false);
-        unnormFeatures = new List<float>();
         outJointL = outL;
         modKey = mHelper.GetModuleKey();
         this.featureCount = featureCount;
@@ -65,7 +62,6 @@ public abstract class IModule
         inJointL.Clear();
         if(outJointL != null)
         outJointL.Clear();
-        unnormFeatures.Clear();
     }
     public abstract void Gen();
  
@@ -110,15 +106,8 @@ public abstract class IModule
         }
         else
         {
-            normFeatures = new List<float>();
-            for (int i = 0; i < featureCount; i++)
-            {
-                normFeatures.Add(UnityEngine.Random.Range(0f, 1f));
-            }
-            index = 0;
-            return;
+            normFeatures = new List<float>(featureCount);
         }
-        
     }
 
     public void MakeGan(){
@@ -135,46 +124,27 @@ public abstract class IModule
 
     protected int RandOvr(int floor, int ceiling)
     {
-        int value = (int)Math.Round(normFeatures[index] * (ceiling - floor) + floor);
+        int value;
+        if (mHelper.ganGenerated)
+        {
+            value = UnityEngine.Random.Range(floor, ceiling + 1);
+            normFeatures[index] = value;
+        }
+        else 
+        {
+            value = (int)Math.Round(normFeatures[index]);
+        }
         index++;
-        unnormFeatures.Add(value);
         return value;
     }
     protected float RandOvr(float floor, float ceiling)
     {
-        float value = normFeatures[index] * (ceiling - floor) + floor;
+        if (mHelper.ganGenerated)
+        {
+            return UnityEngine.Random.Range(floor, ceiling);
+        }
+        float value = normFeatures[index];
         index++;
-        unnormFeatures.Add(value);
         return value;
     }
-    //used together. For first getting a random number, and then adding max - actual 0s to the serializar
-    protected int RememberPadding(int floor, int ceiling)
-    {
-        ceiling--;
-        int value = (int)Math.Round(normFeatures[index] * (ceiling - floor) + floor);
-        index++;
-        unnormFeatures.Add(value);
-        padding = ceiling - value;
-        return value;
-    }
-    protected void AddPadding()
-    {
-        for (int i = 0; i < padding; i++)
-        {
-            unnormFeatures.Add(0);
-            normFeatures[index] = 0;
-            index++;
-        }
-    }
-    protected void AddPadding(int givenPadding)
-    {
-        for (int i = 0; i < givenPadding; i++)
-        {
-            unnormFeatures.Add(0);
-            normFeatures[index] = 0;
-            
-            index++;
-        }
-    }
-    //used together.
 }
