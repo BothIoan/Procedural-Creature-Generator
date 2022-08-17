@@ -19,7 +19,6 @@ public class THelper
             mHelper = MHelper.Inst();
             aHelper = AHelper.Inst();
             activeModules = new Dictionary<int, IModule>();
-            
         }
         return tHelper;
     }
@@ -35,6 +34,8 @@ public class THelper
 
     //uiElements
     public static GameObject button;
+    public static String currentCategory = "";
+    public static List<string> categs;
 
 
     //Methods (B)

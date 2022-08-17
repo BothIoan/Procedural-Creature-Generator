@@ -12,6 +12,7 @@ public class Categ
     private static string SCRIPT = Directory.GetCurrentDirectory() + "\\Gan\\gansManager.py";
     private static System.Diagnostics.Process process;
     private static StreamWriter scriptInput;
+    private static AutoResetEvent evt = new AutoResetEvent(false);
 
     public static void StartScript()
     {
@@ -51,6 +52,26 @@ public class Categ
     public static void ReceiveData(object sender, System.Diagnostics.DataReceivedEventArgs args)
     {
         string sData = args.Data;
+        Debug.Log(sData); 
+        if(sData[0].Equals('c'))
+        {
+            if(sData.Length == 1)
+            {
+                THelper.categs = new List<string>();
+            }
+            else
+            {
+                sData = sData.Substring(2);
+                THelper.categs = sData.Split(new char[] { ',' }).ToList();
+            }
+            evt.Set();
+            return;
+        }
+        if (sData[0].Equals('s'))
+        {
+            evt.Set();
+            return;
+        }
         if (sData[0].Equals('g'))
         {
             THelper.activeModules[int.Parse(sData.Substring(1))].ReceiveGanMade();
@@ -60,6 +81,17 @@ public class Categ
         THelper.activeModules[(int)lData[0]].ReceiveGen(lData.Skip(1).ToList());   
     }
 
+    public static void SaveCateg(string categName)
+    {
+        scriptInput.WriteLine("s " + categName);
+        evt.WaitOne();
+    }
+
+    public static void LoadCateg(string categName)
+    {
+        scriptInput.WriteLine("l " + categName);
+        evt.WaitOne();
+    }
 
     public static void GiveDataTrue(string moduleKey, List<float> data)
     {
@@ -74,5 +106,20 @@ public class Categ
     public static void MakeGan(string moduleKey, string shape)
     {
         scriptInput.WriteLine("m " + moduleKey + " " + shape);
+    }
+
+    public static void ClearGans()
+    {
+        scriptInput.WriteLine("d");
+        evt.WaitOne();
+    }
+    public static void RequestCategs()
+    {
+        scriptInput.WriteLine("c");
+        evt.WaitOne();
+    }
+    public static void DeleteCateg(string categName)
+    {
+        scriptInput.WriteLine("x " + categName);
     }
 }

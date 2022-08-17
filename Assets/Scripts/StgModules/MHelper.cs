@@ -57,7 +57,7 @@ public class MHelper
     //dataE
 
     //flagsB
-    public bool ganGenerated = false;
+    public static bool ganGenerated = false;
     //flagsE
 
     //texturesB

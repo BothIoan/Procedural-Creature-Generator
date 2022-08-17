@@ -59,11 +59,11 @@ public class Modules : MonoBehaviour
     public void InstModules()
     {
         grammar = new GrammarMod();
-        hSpine = new HSpineMod(new List<GameObject>());
+        hSpine = new HSpineMod();
         tail = new TailMod(hSpine);
         legs = new LegsMod(hSpine);
         spider = new SpiderLegsMod(hSpine);
-        vSpine = new VSpineMod(hSpine, new List<GameObject>());
+        vSpine = new VSpineMod(hSpine);
         arms = new ArmsMod(vSpine);
         wings = new WingsMod(vSpine);
         batwings = new BatwingsMod(vSpine);
@@ -92,8 +92,7 @@ public class Modules : MonoBehaviour
 
 public class VSpineMod : IModule
 {
-
-    public VSpineMod(IModule parentModule, List<GameObject> outJointL) : base(5,parentModule,outJointL) { }
+    public VSpineMod(IModule parentModule) : base(5,parentModule, new List<GameObject>()) { }
 
     public override void Gen()
     {
@@ -125,7 +124,7 @@ public class VSpineMod : IModule
 
 public class HSpineMod: IModule
 {
-    public HSpineMod(List<GameObject> outJointL) : base(7,outJointL) { }
+    public HSpineMod() : base(7,new List<GameObject>()) { }
     //inJoint is last joint (for tail)
     //inJointL[0] is first joint (for head/ Vspine)
 

@@ -95,11 +95,12 @@ public abstract class IModule
     }
     public void DataToGan()
     {
+        if(normFeatures.Count!= 0)
         Categ.GiveDataTrue(modKey.ToString(), normFeatures);
     }
     public void GetDataGan()
     {   
-        if (mHelper.ganGenerated)
+        if (MHelper.ganGenerated)
         {
             Categ.RequestData(modKey.ToString());
             evt.WaitOne();
@@ -107,6 +108,7 @@ public abstract class IModule
         else
         {
             normFeatures = new List<float>(featureCount);
+            index = 0;
         }
     }
 
@@ -122,29 +124,101 @@ public abstract class IModule
         evt.Set();
     }
 
+    int Mod(int x, int m)
+    {
+        return (x % m + m) % m;
+    }
+
     protected int RandOvr(int floor, int ceiling)
     {
+        
         int value;
-        if (mHelper.ganGenerated)
+        if (MHelper.ganGenerated)
         {
-            value = UnityEngine.Random.Range(floor, ceiling + 1);
-            normFeatures[index] = value;
+            //if (normFeatures[index] < floor || normFeatures[index] > ceiling) normFeatures[index] = normFeatures[index] % (ceiling - floor) + floor;
+            normFeatures[index] = normFeatures[index] < floor ? floor : normFeatures[index];
+            normFeatures[index] = normFeatures[index] > ceiling ? ceiling : normFeatures[index];
+
+            value = (int)Math.Round(normFeatures[index]);
         }
         else 
         {
-            value = (int)Math.Round(normFeatures[index]);
+            value = UnityEngine.Random.Range(floor, ceiling + 1);
+            normFeatures.Add(value);
         }
         index++;
         return value;
     }
     protected float RandOvr(float floor, float ceiling)
     {
-        if (mHelper.ganGenerated)
+        float value;
+        if (MHelper.ganGenerated)
         {
-            return UnityEngine.Random.Range(floor, ceiling);
+            
+            normFeatures[index] = normFeatures[index] < floor ? floor : normFeatures[index];
+            normFeatures[index] = normFeatures[index] > ceiling ? ceiling : normFeatures[index];
+            value = normFeatures[index];
+
         }
-        float value = normFeatures[index];
+        else
+        {
+            value = UnityEngine.Random.Range(floor, ceiling);
+            normFeatures.Add(value);
+        }
         index++;
         return value;
+    }
+    protected int RememberPadding(int floor, int ceiling)
+    {
+        int value;
+        ceiling--;
+        if (MHelper.ganGenerated)
+        {
+            
+
+            normFeatures[index] = normFeatures[index] < floor ? floor : normFeatures[index];
+            normFeatures[index] = normFeatures[index] > ceiling ? ceiling : normFeatures[index];
+            value = (int)Math.Round(normFeatures[index]);
+        }
+        else
+        {
+            value = UnityEngine.Random.Range(floor, ceiling + 1);
+            normFeatures.Add(value);
+        }
+        padding = ceiling - value;
+        index++;
+        return value;
+    }
+
+    protected void AddPadding()
+    {
+        if(MHelper.ganGenerated)
+            for (int i = 0; i < padding; i++)
+            {
+                normFeatures[index] = 0;
+                index++;
+            }
+        else
+            for (int i = 0; i < padding; i++)
+            {
+                normFeatures.Add(0);
+                index++;
+            }
+    }
+    protected void AddPadding(int givenPadding)
+    {
+        if(MHelper.ganGenerated)
+            for (int i = 0; i < givenPadding; i++)
+            {
+                normFeatures[index] = 0;
+                index++;
+            }
+        else
+            for (int i = 0; i < givenPadding; i++)
+            {
+                normFeatures.Add(0);
+                index++;
+            }
+
     }
 }

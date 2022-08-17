@@ -37,11 +37,17 @@ public class Anim:MonoBehaviour
 
     //Methods (B)
 
+    public void AnimationStage()
+    {
+        HeadRiggingStage();
+        ArmRiggingStage();
+        LegRiggingStage();
+    }
 
 
     //RiggingB
 
-    public void HeadRiggingStage()
+    private void HeadRiggingStage()
     {
         
         RigBuilder rigbuilder = sHelper.symPlane.GetComponent<RigBuilder>();
@@ -72,7 +78,7 @@ public class Anim:MonoBehaviour
         rigbuilder.Build();
     }
 
-    public void ArmRiggingStage()
+    private void ArmRiggingStage()
     {
         int i = 0;
         RigBuilder rigbuilder = sHelper.symPlane.GetComponent<RigBuilder>();
@@ -108,7 +114,7 @@ public class Anim:MonoBehaviour
         });
     }
 
-    public void LegRiggingStage()
+    private void LegRiggingStage()
     {
         int i = 0;
         RigBuilder rigbuilder = sHelper.symPlane.GetComponent<RigBuilder>();
@@ -152,6 +158,7 @@ public class Anim:MonoBehaviour
 
     public void grabAnimation()
     {
+        Setup.DefocusEverything();
         aHelper.armsAnimated = true;
         aHelper.armTargets.ForEach(x => {
             if (!aHelper.increase)

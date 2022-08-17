@@ -15,6 +15,13 @@ public class TopLevel : MonoBehaviour
     private Anim anim;
     //ClassWiring
 
+    //UI
+    [SerializeField] private GameObject createB;
+    [SerializeField] private GameObject grabB;
+    [SerializeField] private GameObject sendDataB;
+    [SerializeField] private GameObject genStrategyB;
+    //UI
+
     //SingletonConstructor
 
     private static THelper topLevelHelper;
@@ -36,12 +43,9 @@ public class TopLevel : MonoBehaviour
         topLevelHelper = THelper.Inst();
         eHelper = EHelper.Inst();
         mHelper = MHelper.Inst();
-
-        THelper.button.SetActive(false);
         new Serializer();
-        THelper.button.SetActive(false);
-        MakeGans();
-        THelper.button.SetActive(true);
+        RequestCategs();
+        DisableButtons();
     }
 
     //SingletonConstructor
@@ -49,27 +53,15 @@ public class TopLevel : MonoBehaviour
     [SerializeField] public bool fun;
     public void toggleGenStrategy()
     {
-        mHelper.ganGenerated = !mHelper.ganGenerated;
+        Setup.DefocusEverything();
+        MHelper.ganGenerated = !MHelper.ganGenerated;
     }
 
-
-    public void animationStage()
+    public void  grammarStage()
     {
-        anim.HeadRiggingStage();
-        anim.ArmRiggingStage();
-        anim.LegRiggingStage();
-    }
+        setup.InstSymPlane();
 
-    public void  generationStage()
-    {
-
-        
-        if (fun) sHelper.forFun();
-        topLevelHelper.Cleanup();
-        modules.Cleanup();
-        setup.PlaneStage();
-
-        RequestGanAll();
+        RequestValues();
 
         modules.hSpine.Gen();
         
@@ -82,11 +74,13 @@ public class TopLevel : MonoBehaviour
             modules.legs.Gen();
         else
             modules.spider.Gen();
+
+        int random = modules.grammar.Rand(0, 2);
         if (modules.grammar.Rand(0, 1) == 0)
         {
             modules.vSpine.Gen();
             modules.arms.Gen();
-            int random = modules.grammar.Rand(0, 2);
+            
             switch (random)
             {
                 case 0:
@@ -100,21 +94,26 @@ public class TopLevel : MonoBehaviour
             modules.head.SetInJoint(modules.vSpine.getOutJoint());
         }
         modules.head.Gen();
-        mHelper.DrawBonesStage();
     }
 
     public void PressButton()
     {
-        generationStage();
-        animationStage();
+        Setup.DefocusEverything();
+        if (fun) sHelper.forFun();
+        topLevelHelper.Cleanup();
+        modules.Cleanup();
+        grammarStage();
+        mHelper.DrawBonesStage();
+        anim.AnimationStage(); 
         eHelper.SaveCharacterStage();
     }
     public void DataToGan()
     {
+        Setup.DefocusEverything();
         foreach (IModule x in THelper.activeModules.Values) x.DataToGan();
     }
 
-    private void MakeGans()
+    public static void MakeGans()
     {
         foreach (IModule x in Modules.iModules)
         {
@@ -122,7 +121,7 @@ public class TopLevel : MonoBehaviour
         }
     }
 
-    public void RequestGanAll()
+    public void RequestValues()
     {
         foreach (IModule x in THelper.activeModules.Values)
         {
@@ -133,5 +132,50 @@ public class TopLevel : MonoBehaviour
     private void OnApplicationQuit()
     {
         Categ.EndScript();
+    }
+
+    public void NewCateg()
+    {
+        Setup.DefocusEverything();
+        if (THelper.activeModules.Count != 0)
+        {
+            Categ.SaveCateg(THelper.currentCategory);
+            THelper.activeModules.Clear();
+            Categ.ClearGans();
+        }
+        MakeGans();
+        string categName = setup.NewCateg();
+        Setup.ChangeSelected(categName);
+        THelper.currentCategory = categName;
+        EnableButtons();
+    }
+    public void DisableButtons()
+    {
+        MHelper.ganGenerated = false;
+        genStrategyB.SetActive(false);
+        sendDataB.SetActive(false);
+    }
+    public void EnableButtons()
+    {
+        genStrategyB.SetActive(true);
+        sendDataB.SetActive(true);
+    }
+    public void RequestCategs()
+    {
+        Categ.RequestCategs();
+        THelper.categs.ForEach(x =>
+        {
+            Setup.MakeButton(x);
+        });
+        if(THelper.categs.Count == 0)
+        {
+            return;
+        }
+        MakeGans();
+        Categ.ClearGans();
+        Setup.ChangeSelected(THelper.categs[0]);
+        THelper.currentCategory = THelper.categs[0];
+        EnableButtons();
+
     }
 }
