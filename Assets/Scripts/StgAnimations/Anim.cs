@@ -49,7 +49,6 @@ public class Anim:MonoBehaviour
 
     private void HeadRiggingStage()
     {
-        
         RigBuilder rigbuilder = sHelper.symPlane.GetComponent<RigBuilder>();
         rigbuilder.layers.Clear();
         GameObject rig = new GameObject();

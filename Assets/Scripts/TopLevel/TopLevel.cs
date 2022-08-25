@@ -19,7 +19,9 @@ public class TopLevel : MonoBehaviour
     [SerializeField] private GameObject createB;
     [SerializeField] private GameObject grabB;
     [SerializeField] private GameObject sendDataB;
-    [SerializeField] private GameObject genStrategyB;
+    [SerializeField] private GameObject switchGanGeneratedB;
+    [SerializeField] private GameObject switchProceduralGeneratedB;
+    [SerializeField] private GameObject label;
     //UI
 
     //SingletonConstructor
@@ -49,12 +51,15 @@ public class TopLevel : MonoBehaviour
     }
 
     //SingletonConstructor
-
-    [SerializeField] public bool fun;
-    public void toggleGenStrategy()
+    public void SetGanGenerated()
     {
         Setup.DefocusEverything();
-        MHelper.ganGenerated = !MHelper.ganGenerated;
+        MHelper.ganGenerated = true;
+    }
+    public void SetProceduralGenerated()
+    {
+        Setup.DefocusEverything();
+        MHelper.ganGenerated = false;
     }
 
     public void  grammarStage()
@@ -99,7 +104,6 @@ public class TopLevel : MonoBehaviour
     public void PressButton()
     {
         Setup.DefocusEverything();
-        if (fun) sHelper.forFun();
         topLevelHelper.Cleanup();
         modules.Cleanup();
         grammarStage();
@@ -152,12 +156,16 @@ public class TopLevel : MonoBehaviour
     public void DisableButtons()
     {
         MHelper.ganGenerated = false;
-        genStrategyB.SetActive(false);
+        switchGanGeneratedB.SetActive(false);
+        switchProceduralGeneratedB.SetActive(false);
+        label.SetActive(false);
         sendDataB.SetActive(false);
     }
     public void EnableButtons()
     {
-        genStrategyB.SetActive(true);
+        switchGanGeneratedB.SetActive(false);
+        switchProceduralGeneratedB.SetActive(false);
+        label.SetActive(false);
         sendDataB.SetActive(true);
     }
     public void RequestCategs()

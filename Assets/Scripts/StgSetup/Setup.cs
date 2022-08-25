@@ -17,7 +17,9 @@ public class Setup: MonoBehaviour
     private static GameObject createB;
     private static GameObject grabB;
     private static GameObject sendDataB;
-    private static GameObject genStrategyB;
+    private static GameObject switchProceduralGeneratedB;
+    private static GameObject switchGanGeneratedB;
+    private static GameObject label;
     private static Sprite btnDefaultImage;
     private static Color btnDefaultColor;
     private static Color btnSelectedColor;
@@ -42,7 +44,9 @@ public class Setup: MonoBehaviour
         createB = GameObject.Find("CreateBone");
         grabB = GameObject.Find("Grab");
         sendDataB = GameObject.Find("SendData");
-        genStrategyB = GameObject.Find("GenStrategy");
+        switchGanGeneratedB = GameObject.Find("GanGenerated");
+        switchProceduralGeneratedB = GameObject.Find("ProceduralGenerated");
+        label = GameObject.Find("Label");
         btnDefaultImage = UnityEditor.AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
         btnDefaultColor = new Color(208f / 255f, 195f / 255f, 210 / 255f);
         btnSelectedColor = new Color(195f / 255f, 200f / 255f, 210f / 255f);
@@ -72,7 +76,9 @@ public class Setup: MonoBehaviour
         createB.SetActive(true);
         grabB.SetActive(true);
         sendDataB.SetActive(true);
-        genStrategyB.SetActive(true);
+        switchGanGeneratedB.SetActive(true);
+        switchProceduralGeneratedB.SetActive(true);
+        label.SetActive(true);
         ChangeSelected(categName);
         THelper.currentCategory = categName;
     }
@@ -113,7 +119,9 @@ public class Setup: MonoBehaviour
             {
                 DefocusEverything();
                 sendDataB.SetActive(false);
-                genStrategyB.SetActive(false);
+                switchGanGeneratedB.SetActive(false);
+                switchProceduralGeneratedB.SetActive(false);
+                label.SetActive(false);
                 MHelper.ganGenerated = false;
                 DisableSelected();
                 THelper.currentCategory = "";
