@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
@@ -37,8 +36,9 @@ public abstract class IModule
         evt = new AutoResetEvent(false);
         outJointL = outL;
         modKey = mHelper.GetModuleKey();
+        normFeatures = new List<float>(featureCount);
         this.featureCount = featureCount;
-
+        
         parentModule = parent;
     }
     public IModule(int featureCount,List<GameObject> outL = null)
@@ -50,6 +50,7 @@ public abstract class IModule
         evt = new AutoResetEvent(false);
         outJointL = outL;
         modKey = mHelper.GetModuleKey();
+        normFeatures = new List<float>(featureCount);
         this.featureCount = featureCount;
     }
 
@@ -122,11 +123,6 @@ public abstract class IModule
     public void ReceiveGanMade()
     {
         evt.Set();
-    }
-
-    int Mod(int x, int m)
-    {
-        return (x % m + m) % m;
     }
 
     protected int RandOvr(int floor, int ceiling)

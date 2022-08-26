@@ -39,7 +39,7 @@ public class THelper
 
 
     //Methods (B)
-    public void Cleanup()
+    public static void Cleanup()
     {
         //temporary, to see different results;
         mHelper.lstJoints.ForEach((x) =>

@@ -39,6 +39,7 @@ public class Categ
 
     public static void EndScript()
     {
+        SaveCateg(THelper.currentCategory);
         process.Kill();
     }
 
@@ -52,7 +53,6 @@ public class Categ
     public static void ReceiveData(object sender, System.Diagnostics.DataReceivedEventArgs args)
     {
         string sData = args.Data;
-        Debug.Log(sData); 
         if(sData[0].Equals('c'))
         {
             if(sData.Length == 1)

@@ -71,7 +71,7 @@ public class Anim:MonoBehaviour
         constraint.data.constrainedXAxis = true;
         constraint.data.constrainedYAxis = true;
         constraint.data.constrainedZAxis = true;
-        constraint.data.limits = new Vector2(-100, 100);
+        constraint.data.limits = new Vector2(-50, 50);
         constraint.data.worldUpAxis = MultiAimConstraintData.Axis.Y;
         rigbuilder.graph.Destroy();
         rigbuilder.Build();
@@ -157,6 +157,7 @@ public class Anim:MonoBehaviour
 
     public void grabAnimation()
     {
+        SHelper.CloseWarningMessage();
         Setup.DefocusEverything();
         aHelper.armsAnimated = true;
         aHelper.armTargets.ForEach(x => {

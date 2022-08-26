@@ -27,7 +27,7 @@ public class EHelper
     //Methods (B)
     public void SaveCharacterStage()
     {
-        PrefabUtility.SaveAsPrefabAsset(setupHelper.symPlane, "Assets/Dihanii/dihanie.prefab");
+        PrefabUtility.SaveAsPrefabAsset(setupHelper.symPlane, "Assets/Exports/character.prefab");
     }
     //Methods (E)
 }

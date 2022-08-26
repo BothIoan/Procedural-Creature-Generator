@@ -17,6 +17,8 @@ public class SHelper
             //instantiate All that needs to be instantiated.
             sHelper.nume1 = new List<string>();
             sHelper.nume2 = new List<string>();
+            categNameWarningMessage = GameObject.Find("CategNameWarning");
+            categNameWarningMessage.SetActive(false);
         }
         return sHelper;
     }
@@ -27,7 +29,8 @@ public class SHelper
 
     //texturesB
     public GameObject symPlane;
-    
+    public static GameObject categNameWarningMessage;
+
     //texturesE
 
     //dataB
@@ -47,8 +50,6 @@ public class SHelper
     {
         Vector3 initial = new Vector3(501, 5, 510);
         sHelper.symPlane = Object.Instantiate(GameObject.Find("Plane"), initial, Quaternion.identity);
-        Debug.Log("Totusi exista");
-        Debug.Log(sHelper.symPlane);
         sHelper.getDirection();
     }
 
@@ -61,6 +62,11 @@ public class SHelper
         {
             currentDSign = 1;
         }
+    }
+
+    public static void CloseWarningMessage()
+    {
+        categNameWarningMessage.SetActive(false);
     }
 
     //Methods (B)

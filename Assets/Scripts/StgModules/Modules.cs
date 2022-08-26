@@ -81,7 +81,7 @@ public class Modules : MonoBehaviour
         iModules.Add(head);
     }
 
-    public void Cleanup()
+    public static void Cleanup()
     {
         iModules.ForEach(x =>{
             x.Cleanup();

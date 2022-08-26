@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Setup: MonoBehaviour
+public class Setup : MonoBehaviour
 {
 
     //ClassWiring
@@ -22,7 +22,6 @@ public class Setup: MonoBehaviour
     private static GameObject label;
     private static Sprite btnDefaultImage;
     private static Color btnDefaultColor;
-    private static Color btnSelectedColor;
     //UI
 
 
@@ -49,7 +48,6 @@ public class Setup: MonoBehaviour
         label = GameObject.Find("Label");
         btnDefaultImage = UnityEditor.AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
         btnDefaultColor = new Color(208f / 255f, 195f / 255f, 210 / 255f);
-        btnSelectedColor = new Color(195f / 255f, 200f / 255f, 210f / 255f);
         //UI
 
     }
@@ -75,13 +73,41 @@ public class Setup: MonoBehaviour
         Categ.LoadCateg(categName);
         createB.SetActive(true);
         grabB.SetActive(true);
-        sendDataB.SetActive(true);
-        switchGanGeneratedB.SetActive(true);
-        switchProceduralGeneratedB.SetActive(true);
-        label.SetActive(true);
         ChangeSelected(categName);
         THelper.currentCategory = categName;
+        THelper.categs.Add(categName);
+        GanGeneratedCleanup();
+        SetProceduralGenerated();
     }
+
+    private static void SetProceduralGenerated()
+    {
+        DefocusEverything();
+        MHelper.ganGenerated = false;
+        switchGanGeneratedB.GetComponent<Button>().interactable = true;
+        switchProceduralGeneratedB.GetComponent<Button>().interactable = false;
+        SHelper.CloseWarningMessage();
+
+    }
+
+    public static string ValidateNewCategName()
+    {
+        string categName = tf.GetComponent<InputField>().text;
+        if (categName.Equals(""))
+        {
+            return "Category names can't be ''";
+        }
+        if (categName.Contains(" ") || categName.Contains(","))
+        {
+            return "Category names can't contain ','s or ' 's";
+        }
+        if (THelper.categs.Contains(categName))
+        {
+            return "Duplicate category names not allowed";
+        }
+        return "";
+    }
+
 
     public static void MakeButton(string categName)
     {
@@ -96,13 +122,13 @@ public class Setup: MonoBehaviour
         text.text = categName;
         text.fontSize = 7;
         Image btnImage = newButton.GetComponent<Image>();
-        btnImage.overrideSprite = btnDefaultImage;
+        btnImage.sprite = btnDefaultImage;
         btnImage.color = btnDefaultColor;
         RectTransform nRectTransform = newButton.GetComponent<RectTransform>();
         //nRectTransform.sizeDelta = new Vector2(20, 10);
         Button button = newButton.GetComponent<Button>();
         button.onClick.AddListener(() => { CategOnClick(text.text); });
-        newButton.transform.SetParent(container.transform,false);
+        newButton.transform.SetParent(container.transform, false);
         GameObject deleteButton = DefaultControls.CreateButton(new DefaultControls.Resources());
         deleteButton.name = categName + "_delete";
         Text textDelete = deleteButton.GetComponentInChildren<Text>();
@@ -118,28 +144,41 @@ public class Setup: MonoBehaviour
             if (categName.Equals(THelper.currentCategory))
             {
                 DefocusEverything();
-                sendDataB.SetActive(false);
-                switchGanGeneratedB.SetActive(false);
-                switchProceduralGeneratedB.SetActive(false);
-                label.SetActive(false);
-                MHelper.ganGenerated = false;
-                DisableSelected();
                 THelper.currentCategory = "";
             }
             Destroy(newButton);
             Destroy(deleteButton);
             Destroy(container);
+            GanGeneratedCleanup();
+            THelper.categs.Remove(categName);
+            SHelper.CloseWarningMessage();
+            SetProceduralGenerated();
+            
         });
         RectTransform containerRT = container.GetComponent<RectTransform>();
         containerRT.sizeDelta = new Vector2(100, 33);
         btnImage = deleteButton.GetComponent<Image>();
-        btnImage.overrideSprite = btnDefaultImage;
+        btnImage.sprite = btnDefaultImage;
         btnImage.color = btnDefaultColor;
+        GanGeneratedCleanup();
+    }
+
+    private static void GanGeneratedCleanup()
+    {
+        THelper.Cleanup();
+        Modules.Cleanup();
+        sendDataB.SetActive(false);
+        switchGanGeneratedB.SetActive(false);
+        switchProceduralGeneratedB.SetActive(false);
+        label.SetActive(false);
+        MHelper.ganGenerated = false;
+        switchGanGeneratedB.GetComponent<Button>().interactable = false;
+        switchProceduralGeneratedB.GetComponent<Button>().interactable = true;
     }
 
     public string NewCateg()
     {
-        string categName= tf.GetComponentInChildren<Text>().text;
+        string categName = tf.GetComponent<InputField>().text;
         MakeButton(categName);
         return categName;
     }
@@ -154,23 +193,13 @@ public class Setup: MonoBehaviour
         if (!THelper.currentCategory.Equals(""))
         {
             GameObject oldSelect = GameObject.Find(THelper.currentCategory + "_select");
-            oldSelect.GetComponent<Image>().color = btnDefaultColor;
+            oldSelect.GetComponent<Button>().interactable = true;
             GameObject oldDelete = GameObject.Find(THelper.currentCategory + "_delete");
-            oldDelete.GetComponent<Image>().color = btnDefaultColor;
+            oldDelete.GetComponent<Button>().interactable = true;
 
         }
         GameObject newSelect = GameObject.Find(newCategName + "_select");
-        newSelect.GetComponent<Image>().color = btnSelectedColor;
-        GameObject newDelete = GameObject.Find(newCategName + "_delete");
-        newDelete.GetComponent<Image>().color = btnSelectedColor;
-    }
-
-    public static void DisableSelected()
-    {
-        GameObject oldSelect = GameObject.Find(THelper.currentCategory + "_select");
-        oldSelect.GetComponent<Image>().color = btnDefaultColor;
-        GameObject oldDelete = GameObject.Find(THelper.currentCategory + "_delete");
-        oldDelete.GetComponent<Image>().color = btnDefaultColor;
+        newSelect.GetComponent<Button>().interactable = false;
     }
 
     //Methods (E)

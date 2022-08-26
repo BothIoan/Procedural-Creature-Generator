@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
+using UnityEngine.UI;
+
 public class TopLevel : MonoBehaviour
 {
 
@@ -26,7 +28,6 @@ public class TopLevel : MonoBehaviour
 
     //SingletonConstructor
 
-    private static THelper topLevelHelper;
     private static TopLevel topLevel;
     public static TopLevel Inst()
     {
@@ -42,12 +43,13 @@ public class TopLevel : MonoBehaviour
         modules = Modules.Inst();
         modules.InstModules();
         anim = Anim.Inst();
-        topLevelHelper = THelper.Inst();
         eHelper = EHelper.Inst();
         mHelper = MHelper.Inst();
+        THelper.Inst();
         new Serializer();
         RequestCategs();
         DisableButtons();
+        SetProceduralGenerated();
     }
 
     //SingletonConstructor
@@ -55,11 +57,18 @@ public class TopLevel : MonoBehaviour
     {
         Setup.DefocusEverything();
         MHelper.ganGenerated = true;
+        switchGanGeneratedB.GetComponent<Button>().interactable = false;
+        switchProceduralGeneratedB.GetComponent<Button>().interactable = true;
+        SHelper.CloseWarningMessage();
     }
     public void SetProceduralGenerated()
     {
         Setup.DefocusEverything();
         MHelper.ganGenerated = false;
+        switchGanGeneratedB.GetComponent<Button>().interactable = true;
+        switchProceduralGeneratedB.GetComponent<Button>().interactable = false;
+        SHelper.CloseWarningMessage();
+
     }
 
     public void  grammarStage()
@@ -103,16 +112,23 @@ public class TopLevel : MonoBehaviour
 
     public void PressButton()
     {
+        SHelper.CloseWarningMessage();
         Setup.DefocusEverything();
-        topLevelHelper.Cleanup();
-        modules.Cleanup();
+        THelper.Cleanup();
+        Modules.Cleanup();
+        DisableButtons();
         grammarStage();
         mHelper.DrawBonesStage();
         anim.AnimationStage(); 
         eHelper.SaveCharacterStage();
+        if (!THelper.currentCategory.Equals(""))
+        {
+            EnableButtons();
+        }
     }
     public void DataToGan()
     {
+        SHelper.CloseWarningMessage();
         Setup.DefocusEverything();
         foreach (IModule x in THelper.activeModules.Values) x.DataToGan();
     }
@@ -140,6 +156,15 @@ public class TopLevel : MonoBehaviour
 
     public void NewCateg()
     {
+        SHelper.CloseWarningMessage();
+        string validateString = Setup.ValidateNewCategName();
+        if (!validateString.Equals(""))
+        {
+            SHelper.categNameWarningMessage.GetComponent<Text>().text = validateString;
+            SHelper.categNameWarningMessage.SetActive(true);
+            return;
+        }
+
         Setup.DefocusEverything();
         if (THelper.activeModules.Count != 0)
         {
@@ -147,15 +172,17 @@ public class TopLevel : MonoBehaviour
             THelper.activeModules.Clear();
             Categ.ClearGans();
         }
+        Modules.Cleanup();
+        THelper.Cleanup();
+        DisableButtons();
+        SetProceduralGenerated();
         MakeGans();
         string categName = setup.NewCateg();
         Setup.ChangeSelected(categName);
         THelper.currentCategory = categName;
-        EnableButtons();
     }
     public void DisableButtons()
     {
-        MHelper.ganGenerated = false;
         switchGanGeneratedB.SetActive(false);
         switchProceduralGeneratedB.SetActive(false);
         label.SetActive(false);
@@ -163,9 +190,9 @@ public class TopLevel : MonoBehaviour
     }
     public void EnableButtons()
     {
-        switchGanGeneratedB.SetActive(false);
-        switchProceduralGeneratedB.SetActive(false);
-        label.SetActive(false);
+        switchGanGeneratedB.SetActive(true);
+        switchProceduralGeneratedB.SetActive(true);
+        label.SetActive(true);
         sendDataB.SetActive(true);
     }
     public void RequestCategs()
@@ -181,9 +208,6 @@ public class TopLevel : MonoBehaviour
         }
         MakeGans();
         Categ.ClearGans();
-        Setup.ChangeSelected(THelper.categs[0]);
-        THelper.currentCategory = THelper.categs[0];
-        EnableButtons();
 
     }
 }
